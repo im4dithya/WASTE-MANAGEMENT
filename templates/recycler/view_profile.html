@@ -1,0 +1,414 @@
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>My Profile - Waste Management System</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f7f0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .profile-container {
+        max-width: 900px;
+        width: 100%;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        color: white;
+        padding: 35px 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .profile-header::before {
+        content: "♻️";
+        font-size: 120px;
+        position: absolute;
+        opacity: 0.1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .profile-header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+    .header-icon {
+        font-size: 32px;
+    }
+    .profile-subtitle {
+        margin-top: 10px;
+        opacity: 0.9;
+        font-size: 14px;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 6px 20px;
+        border-radius: 20px;
+        display: inline-block;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .profile-content {
+        padding: 40px;
+    }
+    
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+    }
+    
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .info-card {
+        background: #f8fff8;
+        border: 1px solid #e0f2e0;
+        border-radius: 15px;
+        padding: 25px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(46, 125, 50, 0.1);
+        border-color: #4caf50;
+    }
+    .info-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient(to bottom, #2e7d32, #4caf50);
+    }
+    
+    .info-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .info-label {
+        font-size: 13px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .label-icon {
+        font-size: 16px;
+        color: #4caf50;
+    }
+    .info-value {
+        font-size: 18px;
+        font-weight: 500;
+        color: #333;
+        padding: 10px 0;
+        border-bottom: 1px dashed #e0e0e0;
+    }
+    
+    .profile-image-section {
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .image-container {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    .profile-image {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 6px solid #e8f5e9;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    .profile-image:hover {
+        transform: scale(1.03);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+        border-color: #4caf50;
+    }
+    .image-badge {
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        background: #4caf50;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .proof-section {
+        background: #fff8e1;
+        border: 1px solid #ffecb3;
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 30px;
+        text-align: center;
+    }
+    .proof-section .info-label {
+        color: #ff9800;
+        justify-content: center;
+    }
+    .btn-proof {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+        color: white;
+        padding: 12px 30px;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+    }
+    .btn-proof:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(255, 152, 0, 0.3);
+    }
+    
+    .profile-actions {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 1px solid #eee;
+    }
+    .btn-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        color: white;
+        padding: 16px 40px;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(46, 125, 50, 0.3);
+        background: linear-gradient(135deg, #27632a 0%, #3d8b40 100%);
+    }
+    
+    .verification-status {
+        background: #e8f5e9;
+        border-radius: 10px;
+        padding: 15px 25px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+        font-weight: 500;
+        color: #2e7d32;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        .profile-content {
+            padding: 25px;
+        }
+        .profile-header {
+            padding: 25px 20px;
+        }
+        .profile-header h1 {
+            font-size: 22px;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .profile-image {
+            width: 180px;
+            height: 180px;
+        }
+        .info-value {
+            font-size: 16px;
+        }
+        .btn-edit {
+            padding: 14px 30px;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        body {
+            padding: 10px;
+        }
+        .profile-container {
+            border-radius: 15px;
+        }
+        .profile-header {
+            padding: 20px 15px;
+        }
+        .profile-content {
+            padding: 20px 15px;
+        }
+        .info-card {
+            padding: 20px 15px;
+        }
+        .profile-image {
+            width: 150px;
+            height: 150px;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="profile-container">
+    <!-- Header Section -->
+    <div class="profile-header">
+        <h1>
+            <span class="header-icon">👤</span>
+            My Profile - Waste Management System
+        </h1>
+        <div class="profile-subtitle">Recycler Dashboard</div>
+    </div>
+    
+    <!-- Profile Content -->
+    <div class="profile-content">
+        {% for i in data %}
+        <div class="profile-grid">
+            <!-- Left Column: Profile Info -->
+            <div class="profile-info">
+                <!-- Name Card -->
+                <div class="info-card">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <span class="label-icon">👤</span>
+                            Full Name
+                        </div>
+                        <div class="info-value">{{ i.name }}</div>
+                    </div>
+                </div>
+                
+                <!-- Contact Card -->
+                <div class="info-card">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <span class="label-icon">📧</span>
+                            Email Address
+                        </div>
+                        <div class="info-value">{{ i.email }}</div>
+                    </div>
+                    <div class="info-row" style="margin-top: 20px;">
+                        <div class="info-label">
+                            <span class="label-icon">📱</span>
+                            Phone Number
+                        </div>
+                        <div class="info-value">{{ i.phone }}</div>
+                    </div>
+                </div>
+                
+                <!-- Account Info -->
+                <div class="info-card">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <span class="label-icon">🆔</span>
+                            Account ID
+                        </div>
+                        <div class="info-value">RC-{{ i.id|stringformat:"04d" }}</div>
+                    </div>
+                    <div class="info-row" style="margin-top: 20px;">
+                        <div class="info-label">
+                            <span class="label-icon">👁️</span>
+                            Profile Visibility
+                        </div>
+                        <div class="info-value">Public Recycler Profile</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Profile Image -->
+            <div class="profile-image-section">
+                <div class="image-container">
+                    <img src="{{ i.photo }}" alt="{{ i.name }}" class="profile-image" width="200" height="200"/>
+                    <div class="image-badge">
+                        <span>📸</span> Profile Photo
+                    </div>
+                </div>
+                
+                <!-- Verification Status -->
+                <div class="verification-status">
+                    <span>✅</span>
+                    Profile Verified - Waste Management System
+                </div>
+            </div>
+        </div>
+        
+        <!-- Proof Section -->
+        <div class="proof-section">
+            <div class="info-label">
+                <span class="label-icon">📄</span>
+                Identity Verification Document
+            </div>
+            <p style="color: #666; margin: 10px 0;">Your uploaded proof document for verification</p>
+            <a href="{{ i.proof }}" target="_blank" class="btn-proof">
+                <span>📎</span>
+                View Verification Document
+            </a>
+        </div>
+        
+        <!-- Action Button -->
+        <div class="profile-actions">
+            <a href="/profile_edit/{{ i.id }}" class="btn-edit">
+                <span>✏️</span>
+                Edit Profile Information
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}

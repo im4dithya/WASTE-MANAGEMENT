@@ -1,0 +1,1233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Pickup Dashboard - Waste Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Reset & Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        color: #2c3e50;
+        overflow-x: hidden;
+    }
+
+    /* Main Container */
+    .dashboard-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+        width: 280px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 0;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 0 30px 30px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .logo-icon {
+        font-size: 36px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .logo-text {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+    }
+
+    .logo-subtitle {
+        font-size: 12px;
+        opacity: 0.8;
+        margin-left: 51px;
+        margin-top: -5px;
+    }
+
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        font-weight: 700;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .user-info {
+        flex: 1;
+    }
+
+    .user-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 3px;
+    }
+
+    .user-role {
+        font-size: 12px;
+        opacity: 0.8;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        display: inline-block;
+    }
+
+    /* Navigation Menu */
+    .nav-menu {
+        padding: 0 20px;
+    }
+
+    .nav-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.6;
+        margin: 25px 0 15px;
+        padding-left: 10px;
+        font-weight: 600;
+    }
+
+    .nav-item {
+        list-style: none;
+        margin-bottom: 5px;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(5px);
+    }
+
+    .nav-link.active {
+        background: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 4px;
+        background: white;
+        border-radius: 0 2px 2px 0;
+    }
+
+    .nav-icon {
+        font-size: 18px;
+        width: 24px;
+        text-align: center;
+    }
+
+    .nav-text {
+        flex: 1;
+        font-size: 15px;
+    }
+
+    .nav-badge {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    /* Main Content Area */
+    .main-content {
+        flex: 1;
+        margin-left: 280px;
+        padding: 30px;
+        transition: margin-left 0.3s ease;
+    }
+
+    /* Top Header */
+    .top-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-icon {
+        color: #667eea;
+        font-size: 32px;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .notification-btn {
+        position: relative;
+        background: white;
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 20px;
+    }
+
+    .notification-btn:hover {
+        background: #f8f9ff;
+        border-color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(102, 126, 234, 0.1);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    /* Dashboard Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stat-card:nth-child(4)::before {
+        background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);
+    }
+
+    .stat-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .stat-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        flex-shrink: 0;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-card:nth-child(2) .stat-icon {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .stat-card:nth-child(3) .stat-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stat-card:nth-child(4) .stat-icon {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    }
+
+    .stat-text {
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        color: #2c3e50;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .stat-trend {
+        font-size: 13px;
+        color: #7f8c8d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .trend-up { color: #2ecc71; }
+    .trend-down { color: #e74c3c; }
+
+    /* Quick Actions */
+    .quick-actions {
+        margin-bottom: 40px;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .section-icon {
+        color: #667eea;
+        font-size: 26px;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        border: 2px solid #e8f0fe;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: #2c3e50;
+    }
+
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .action-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: white;
+        margin: 0 auto 20px;
+        transition: all 0.3s ease;
+    }
+
+    .action-card:hover .action-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .action-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .action-description {
+        font-size: 13px;
+        color: #7f8c8d;
+        line-height: 1.5;
+    }
+
+    /* Recent Activity */
+    .recent-activity {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        margin-bottom: 40px;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+        background: #f0f4ff;
+        transform: translateX(5px);
+    }
+
+    .activity-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+
+    .activity-time {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    /* Mobile Menu Toggle */
+    .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1100;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Content Area for Child Templates */
+    #home {
+        flex: 1;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 992px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .main-content {
+            margin-left: 0;
+        }
+
+        .mobile-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .top-header {
+            padding-top: 60px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 20px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .stat-card {
+            padding: 25px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .main-content {
+            padding: 15px;
+        }
+
+        .header-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .user-profile {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .user-info {
+            text-align: center;
+        }
+
+        .stat-content {
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+
+        .activity-item {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <!-- Logo and Brand -->
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">♻️</div>
+                <div class="logo-text">CleanPickup</div>
+            </div>
+            <div class="logo-subtitle">Waste Management System</div>
+
+            <!-- User Profile -->
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">P</div>
+                <div class="user-info">
+                    <div class="user-name" id="userName">Pickup Personnel</div>
+                    <div class="user-role">Waste Collector</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+            <div class="nav-title">Main Navigation</div>
+            <ul>
+                <li class="nav-item">
+                    <a href="/pickup_home" class="nav-link active">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/view_profile#home" class="nav-link">
+                        <span class="nav-icon">👤</span>
+                        <span class="nav-text">View Profile</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/pickup_view_allocated_area#home" class="nav-link">
+                        <span class="nav-icon">🗺️</span>
+                        <span class="nav-text">Allocated Areas</span>
+                        <span class="nav-badge" id="areaBadge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/view_user_request#home" class="nav-link">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">User Requests</span>
+                        <span class="nav-badge" id="requestBadge">5</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-title">Collections</div>
+            <ul>
+                <li class="nav-item">
+                    <a href="/view_todays_collection#home" class="nav-link">
+                        <span class="nav-icon">📅</span>
+                        <span class="nav-text">Today's Collection</span>
+                        <span class="nav-badge" id="todayBadge">8</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/view_collection_history#home" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Collection History</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-title">Account</div>
+            <ul>
+                <li class="nav-item">
+                    <a href="/change_password_pickup#home" class="nav-link">
+                        <span class="nav-icon">🔐</span>
+                        <span class="nav-text">Change Password</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link" style="color: #ff6b6b;">
+                        <span class="nav-icon">🚪</span>
+                        <span class="nav-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div>
+                <h1 class="page-title">
+                    <span class="page-icon">🏠</span>
+                    Pickup Dashboard
+                </h1>
+                <p style="color: #7f8c8d; margin-top: 8px;">Welcome back! Here's your daily overview</p>
+            </div>
+
+            <div class="header-actions">
+                <div class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </div>
+                <div style="font-size: 14px; color: #667eea; font-weight: 600;">
+                    <i class="fas fa-calendar-day"></i>
+                    <span id="currentDate">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Allocated Areas</div>
+                        <div class="stat-value" id="areasCount">3</div>
+                        <div class="stat-trend">
+                            <i class="fas fa-chart-line trend-up"></i>
+                            <span>Active in your zone</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Pending Requests</div>
+                        <div class="stat-value" id="pendingCount">5</div>
+                        <div class="stat-trend">
+                            <i class="fas fa-exclamation-circle" style="color: #f39c12;"></i>
+                            <span>Awaiting schedule</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Today's Collections</div>
+                        <div class="stat-value" id="todayCount">8</div>
+                        <div class="stat-trend">
+                            <i class="fas fa-check-circle trend-up"></i>
+                            <span>Scheduled for today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Monthly Performance</div>
+                        <div class="stat-value">94%</div>
+                        <div class="stat-trend">
+                            <i class="fas fa-chart-line trend-up"></i>
+                            <span>+2.5% from last month</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-icon">⚡</span>
+                    Quick Actions
+                </h2>
+                <div style="font-size: 14px; color: #7f8c8d;">
+                    <i class="fas fa-bolt"></i>
+                    <span>Most frequent tasks</span>
+                </div>
+            </div>
+
+            <div class="actions-grid">
+                <a href="/view_user_request" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="action-title">Manage Requests</div>
+                    <div class="action-description">Schedule new waste collection requests from users</div>
+                </a>
+
+                <a href="/view_todays_collection" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-trash-restore"></i>
+                    </div>
+                    <div class="action-title">Today's Route</div>
+                    <div class="action-description">View and navigate through today's collection schedule</div>
+                </a>
+
+                <a href="/pickup_view_allocated_area" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-map-pin"></i>
+                    </div>
+                    <div class="action-title">Check Areas</div>
+                    <div class="action-description">View your allocated collection areas and boundaries</div>
+                </a>
+
+                <a href="/update_waste_status" class="action-card">
+                    <div class="action-icon">
+                        <i class="fas fa-weight-hanging"></i>
+                    </div>
+                    <div class="action-title">Update Quantities</div>
+                    <div class="action-description">Record actual collected waste quantities</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-icon">📈</span>
+                    Recent Activity
+                </h2>
+                <a href="/view_collection_history" style="color: #667eea; font-weight: 600; text-decoration: none;">
+                    <i class="fas fa-history"></i>
+                    <span>View All</span>
+                </a>
+            </div>
+
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Completed Collection #1245</div>
+                        <div class="activity-time">2 hours ago • Plastic waste collected</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">New Request Scheduled</div>
+                        <div class="activity-time">4 hours ago • User: John Doe</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Area Boundary Updated</div>
+                        <div class="activity-time">Yesterday • Zone expanded by 500m</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Performance Milestone</div>
+                        <div class="activity-time">2 days ago • 95% collection rate achieved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area for Child Templates -->
+        <div id="home">
+            {% block body %}
+            <!-- Child template content will be inserted here -->
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all dashboard components
+        initializeDashboard();
+
+        // Initialize interactive elements
+        initializeInteractiveElements();
+
+        // Load initial data
+        loadDashboardData();
+    });
+
+    function initializeDashboard() {
+        // Set current date
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+
+        // Set user avatar initial
+        const userName = "{{ user.name|default:'Pickup Personnel' }}";
+        if (userName) {
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('userAvatar').textContent = userName.charAt(0).toUpperCase();
+        }
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            this.innerHTML = sidebar.classList.contains('active') ?
+                '<i class="fas fa-times"></i>' :
+                '<i class="fas fa-bars"></i>';
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 992 &&
+                !sidebar.contains(event.target) &&
+                !mobileToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+
+        // Set active nav link based on current URL
+        setActiveNavLink();
+    }
+
+    function initializeInteractiveElements() {
+        // Notification button
+        const notificationBtn = document.getElementById('notificationBtn');
+        notificationBtn.addEventListener('click', function() {
+            showNotifications();
+        });
+
+        // Stat card animations
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeIn 0.5s ease-out forwards';
+            card.style.opacity = '0';
+        });
+
+        // Action card animations
+        const actionCards = document.querySelectorAll('.action-card');
+        actionCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeIn 0.5s ease-out forwards';
+            card.style.opacity = '0';
+        });
+
+        // Activity item animations
+        const activityItems = document.querySelectorAll('.activity-item');
+        activityItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.05}s`;
+            item.style.animation = 'slideIn 0.3s ease-out forwards';
+            item.style.opacity = '0';
+        });
+
+        // Add hover effects to stat cards
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.12)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.08)';
+            });
+        });
+    }
+
+    function loadDashboardData() {
+        // Simulate loading data from server
+        setTimeout(() => {
+            // Update badge counts (in real app, these would come from API)
+            const badges = {
+                areaBadge: Math.floor(Math.random() * 5) + 1,
+                requestBadge: Math.floor(Math.random() * 10) + 1,
+                todayBadge: Math.floor(Math.random() * 15) + 5
+            };
+
+            // Update badge displays
+            Object.keys(badges).forEach(badgeId => {
+                const element = document.getElementById(badgeId);
+                if (element) {
+                    element.textContent = badges[badgeId];
+                }
+            });
+
+            // Update stat values
+            document.getElementById('areasCount').textContent = badges.areaBadge;
+            document.getElementById('pendingCount').textContent = badges.requestBadge;
+            document.getElementById('todayCount').textContent = badges.todayBadge;
+
+            // Show loading animation
+            showLoadingAnimation();
+
+        }, 1000);
+    }
+
+    function setActiveNavLink() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+
+            // Check if this link matches current path
+            const href = link.getAttribute('href');
+            if (href === currentPath ||
+                (currentPath === '/pickup_home' && href === '/pickup_home')) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    function showNotifications() {
+        // Create notification dropdown
+        const notificationBtn = document.getElementById('notificationBtn');
+        const rect = notificationBtn.getBoundingClientRect();
+
+        // Remove existing notification dropdown
+        const existingDropdown = document.querySelector('.notification-dropdown');
+        if (existingDropdown) {
+            existingDropdown.remove();
+            return;
+        }
+
+        // Create dropdown
+        const dropdown = document.createElement('div');
+        dropdown.className = 'notification-dropdown';
+        dropdown.style.cssText = `
+            position: fixed;
+            top: ${rect.bottom + 10}px;
+            right: 20px;
+            width: 320px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 2px solid #e8f0fe;
+            z-index: 1001;
+            animation: fadeIn 0.3s ease-out;
+        `;
+
+        dropdown.innerHTML = `
+            <div style="padding: 20px; border-bottom: 1px solid #e8f0fe;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-weight: 700; color: #2c3e50;">Notifications</div>
+                    <button style="background: none; border: none; color: #667eea; cursor: pointer; font-size: 12px;">Mark all as read</button>
+                </div>
+            </div>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <div style="padding: 15px 20px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 10px; height: 10px; background: #667eea; border-radius: 50%; margin-top: 5px;"></div>
+                    <div>
+                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">New Collection Request</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">User John Doe has requested waste pickup</div>
+                        <div style="font-size: 11px; color: #95a5a6; margin-top: 5px;">10 minutes ago</div>
+                    </div>
+                </div>
+                <div style="padding: 15px 20px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; margin-top: 5px;"></div>
+                    <div>
+                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Route Updated</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">New optimized route available for today</div>
+                        <div style="font-size: 11px; color: #95a5a6; margin-top: 5px;">1 hour ago</div>
+                    </div>
+                </div>
+                <div style="padding: 15px 20px; display: flex; align-items: flex-start; gap: 12px;">
+                    <div style="width: 10px; height: 10px; background: #f39c12; border-radius: 50%; margin-top: 5px;"></div>
+                    <div>
+                        <div style="font-weight: 600; color: #2c3e50; margin-bottom: 3px;">Performance Alert</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">You're on track for monthly target</div>
+                        <div style="font-size: 11px; color: #95a5a6; margin-top: 5px;">3 hours ago</div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 15px 20px; border-top: 1px solid #e8f0fe; text-align: center;">
+                <a href="/notifications" style="color: #667eea; font-weight: 600; text-decoration: none; font-size: 14px;">
+                    View All Notifications
+                </a>
+            </div>
+        `;
+
+        document.body.appendChild(dropdown);
+
+        // Close dropdown when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
+                    dropdown.remove();
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }, 10);
+    }
+
+    function showLoadingAnimation() {
+        // Add shimmer effect to stat cards
+        const statValues = document.querySelectorAll('.stat-value');
+        statValues.forEach(value => {
+            value.style.background = 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)';
+            value.style.backgroundSize = '200% 100%';
+            value.style.animation = 'shimmer 1.5s infinite';
+            value.style.webkitBackgroundClip = 'text';
+            value.style.backgroundClip = 'text';
+            value.style.color = 'transparent';
+        });
+
+        // Remove shimmer after data loads
+        setTimeout(() => {
+            statValues.forEach(value => {
+                value.style.background = '';
+                value.style.animation = '';
+                value.style.color = '';
+            });
+        }, 1500);
+    }
+
+    // Add CSS for shimmer animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Auto-refresh dashboard data every 30 seconds
+    setInterval(loadDashboardData, 30000);
+</script>
+</body>
+</html>

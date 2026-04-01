@@ -1,0 +1,664 @@
+{% extends 'PICKUP_/pickuphome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Schedule Collection - Waste Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+{#        min-height: 100vh;#}
+{#        display: flex;#}
+{#        align-items: center;#}
+{#        justify-content: center;#}
+{#        padding: 20px;#}
+    }
+    
+    /* Main Container */
+    .schedule-container {
+        max-width: 700px;
+        width: 100%;
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    /* Header Card */
+    .header-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 16px 16px 0 0;
+        padding: 35px 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+    
+    .header-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    .header-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 0 0 16px 16px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 30px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 15.5px;
+        letter-spacing: 0.3px;
+    }
+    
+    .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .label-icon {
+        color: #667eea;
+        font-size: 20px;
+    }
+    
+    .required-star {
+        color: #e74c3c;
+        margin-left: 4px;
+    }
+    
+    /* Date Input Styling */
+    .date-input-container {
+        position: relative;
+    }
+    
+    .date-input {
+        width: 100%;
+        padding: 18px 20px;
+        padding-right: 50px;
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #2c3e50;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        letter-spacing: 0.5px;
+    }
+    
+    .date-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+    }
+    
+    .date-input:disabled {
+        background: #f5f5f5;
+        cursor: not-allowed;
+        color: #95a5a6;
+    }
+    
+    .date-icon {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #667eea;
+        font-size: 20px;
+        pointer-events: none;
+    }
+    
+    /* Date Information Panel */
+    .date-info-panel {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 15px;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #d1d9ff;
+    }
+    
+    .info-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #5d6d7e;
+        font-size: 14.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .info-label-icon {
+        color: #667eea;
+        font-size: 16px;
+    }
+    
+    .info-value {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 15px;
+    }
+    
+    .today-value {
+        color: #27ae60;
+    }
+    
+    .selected-value {
+        color: #e67e22;
+    }
+    
+    /* Warning Message */
+    .warning-message {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 10px;
+        padding: 16px 20px;
+        margin-top: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .warning-icon {
+        color: #f39c12;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    
+    .warning-content {
+        font-size: 14px;
+        color: #856404;
+        line-height: 1.5;
+    }
+    
+    .warning-content strong {
+        color: #e67e22;
+    }
+    
+    /* Button Group */
+    .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+    }
+    
+    .submit-btn, .cancel-btn {
+        flex: 1;
+        padding: 18px 25px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+        letter-spacing: 0.5px;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.25);
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(46, 204, 113, 0.35);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+    
+    .submit-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .submit-btn-icon {
+        font-size: 18px;
+    }
+    
+    .cancel-btn {
+        background: #f8f9fa;
+        color: #5d6d7e;
+        border: 2px solid #e9ecef;
+    }
+    
+    .cancel-btn:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        border-color: #dee2e6;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .cancel-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Error Message */
+    .error-message {
+        background: #fee;
+        border: 1px solid #f5c6cb;
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-top: 15px;
+        display: none;
+        align-items: center;
+        gap: 12px;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .error-icon {
+        color: #e74c3c;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+    
+    .error-text {
+        color: #721c24;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    /* Success Message */
+    .success-message {
+        background: #d5f4e6;
+        border: 1px solid #a3e4bf;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        display: none;
+        align-items: center;
+        gap: 15px;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .success-icon {
+        color: #27ae60;
+        font-size: 24px;
+    }
+    
+    .success-text {
+        color: #155724;
+        font-weight: 500;
+        font-size: 15px;
+    }
+    
+    /* Animations */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .shake {
+        animation: shake 0.5s ease;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .header-card {
+            padding: 30px 25px;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .form-card {
+            padding: 30px 25px;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .header-title {
+            font-size: 24px;
+        }
+        
+        .button-group {
+            flex-direction: column;
+        }
+        
+        .date-info-panel {
+            padding: 20px;
+        }
+        
+        .info-row {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .header-card {
+            padding: 25px 20px;
+        }
+        
+        .form-card {
+            padding: 25px 20px;
+        }
+        
+        .header-title {
+            font-size: 22px;
+        }
+        
+        .submit-btn, .cancel-btn {
+            padding: 16px 20px;
+            font-size: 15.5px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="schedule-container">
+    <!-- Header Card -->
+    <div class="header-card">
+        <span class="header-icon">📅</span>
+        <h1 class="header-title">Schedule Waste Collection</h1>
+        <p class="header-subtitle">Select a convenient date for waste pickup</p>
+    </div>
+    
+    <!-- Form Card -->
+    <div class="form-card">
+        <!-- Success Message (Hidden by default) -->
+        <div class="success-message" id="successMessage">
+            <span class="success-icon">✓</span>
+            <div class="success-text">
+                Collection date scheduled successfully! You will receive a confirmation shortly.
+            </div>
+        </div>
+        
+        <form id="collectionForm" method="post" action="/update_collection_date_post/{{ id }}">
+            <!-- Date Selection -->
+            <div class="form-group">
+                <label class="form-label" for="collectionDate">
+                    <span class="label-with-icon">
+                        <span class="label-icon">📅</span>
+                        Select Collection Date
+                        <span class="required-star">*</span>
+                    </span>
+                </label>
+                
+                <div class="date-input-container">
+                    <input type="date" 
+                           id="collectionDate" 
+                           name="textfield" 
+                           class="date-input"
+                           required>
+                    <span class="date-icon">📅</span>
+                </div>
+                
+                <!-- Error Message -->
+                <div class="error-message" id="errorMessage">
+                    <span class="error-icon">⚠️</span>
+                    <div class="error-text" id="errorText">Please select a valid collection date</div>
+                </div>
+                
+                <!-- Date Information Panel -->
+                <div class="date-info-panel">
+                    <div class="info-row">
+                        <span class="info-label">
+                            <span class="info-label-icon">📌</span>
+                            Today's Date
+                        </span>
+                        <span class="info-value today-value" id="todayDate">Loading...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">
+                            <span class="info-label-icon">🎯</span>
+                            Selected Date
+                        </span>
+                        <span class="info-value selected-value" id="selectedDate">Not selected yet</span>
+                    </div>
+                </div>
+                
+                <!-- Warning Message -->
+                <div class="warning-message">
+                    <span class="warning-icon">📢</span>
+                    <div class="warning-content">
+                        <strong>Important:</strong> Please select a date at least 1 day in advance. 
+                        Same-day pickups cannot be scheduled. Collection times will be confirmed 
+                        by our pickup team.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Button Group -->
+            <div class="button-group">
+                <input type="submit" 
+                       value="Confirm Collection Date" 
+                       id="submitBtn"
+                       class="submit-btn">
+                <a href="/view_user_request" class="cancel-btn">
+                    <span>←</span>
+                    Cancel & Return
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const collectionInput = document.getElementById('collectionDate');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const todayDateElement = document.getElementById('todayDate');
+        const selectedDateElement = document.getElementById('selectedDate');
+        const successMessage = document.getElementById('successMessage');
+        
+        // Set minimum date to tomorrow and format dates
+        function initializeDates() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            // Format minimum date as YYYY-MM-DD
+            const minDate = formatDateForInput(tomorrow);
+            collectionInput.setAttribute('min', minDate);
+            
+            // Format maximum date (90 days from now)
+            const maxDate = new Date(today);
+            maxDate.setDate(maxDate.getDate() + 90);
+            collectionInput.setAttribute('max', formatDateForInput(maxDate));
+            
+            // Display today's date in readable format
+            todayDateElement.textContent = formatDateForDisplay(today);
+            
+            // Disable submit button initially
+            submitBtn.disabled = true;
+        }
+        
+        // Format date for input field (YYYY-MM-DD)
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // Format date for display (e.g., "Monday, January 15, 2024")
+        function formatDateForDisplay(date) {
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+        
+        // Calculate days between two dates
+        function calculateDaysBetween(startDate, endDate) {
+            const oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            const diffDays = Math.round(Math.abs((startDate - endDate) / oneDay));
+            return diffDays;
+        }
+        
+        // Update selected date display
+        collectionInput.addEventListener('change', function() {
+            const selectedDate = this.value;
+            
+            if (selectedDate) {
+                const dateObj = new Date(selectedDate + 'T00:00:00');
+                selectedDateElement.textContent = formatDateForDisplay(dateObj);
+                
+                // Validate the date
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (dateObj <= today) {
+                    showError('Collection date must be in the future (tomorrow or later)');
+                    submitBtn.disabled = true;
+                } else {
+                    hideError();
+                    submitBtn.disabled = false;
+                    
+                    // Show days until collection
+                    const daysUntil = calculateDaysBetween(today, dateObj);
+                    if (daysUntil === 1) {
+                        selectedDateElement.textContent += ' (Tomorrow)';
+                    } else {
+                        selectedDateElement.textContent += ` (In ${daysUntil} days)`;
+                    }
+                }
+            } else {
+                selectedDateElement.textContent = 'Not selected yet';
+                submitBtn.disabled = true;
+                hideError();
+            }
+        });
+        
+        // Show error message
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.style.display = 'flex';
+            collectionInput.classList.add('shake');
+            setTimeout(() => {
+                collectionInput.classList.remove('shake');
+            }, 500);
+        }
+        
+        // Hide error message
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+        
+        // Form validation on submit
+        document.getElementById('collectionForm').addEventListener('submit', function(e) {
+            const selectedDate = collectionInput.value;
+            
+            if (!selectedDate) {
+                e.preventDefault();
+                showError('Please select a collection date');
+                collectionInput.focus();
+                return false;
+            }
+            
+            const dateObj = new Date(selectedDate + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (dateObj <= today) {
+                e.preventDefault();
+                showError('Collection date must be in the future (tomorrow or later)');
+                collectionInput.focus();
+                return false;
+            }
+            
+            // Show success message (in real app, this would be after server response)
+            // e.preventDefault();
+            // successMessage.style.display = 'flex';
+            // collectionInput.disabled = true;
+            // submitBtn.disabled = true;
+            // return false;
+            
+            return true;
+        });
+        
+        // Add visual feedback on input focus
+        collectionInput.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        collectionInput.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+        
+        // Initialize everything
+        initializeDates();
+    });
+</script>
+</body>
+</html>
+{% endblock %}

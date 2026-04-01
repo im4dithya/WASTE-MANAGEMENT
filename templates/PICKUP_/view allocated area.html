@@ -1,0 +1,1184 @@
+{% extends 'PICKUP_/pickuphome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Allocated Areas - Waste Collection Zones</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    /* Reset & Base Styles */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #2c3e50;
+    }
+    
+    /* Main Container */
+    .main-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Header Section */
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 35px 40px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 0;
+    }
+    
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        letter-spacing: 0.5px;
+    }
+    
+    .header-icon {
+        font-size: 42px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        margin-top: 8px;
+        font-weight: 400;
+        max-width: 600px;
+    }
+    
+    /* Status Indicator */
+    .location-status {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 18px 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        min-width: 300px;
+    }
+    
+    .status-indicator {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        position: relative;
+    }
+    
+    .status-indicator.active {
+        background: #4caf50;
+        box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.3);
+    }
+    
+    .status-indicator.inactive {
+        background: #ff9800;
+        box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.3);
+    }
+    
+    .status-pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(3);
+            opacity: 0;
+        }
+    }
+    
+    .status-text {
+        font-weight: 600;
+        font-size: 15px;
+        flex: 1;
+    }
+    
+    .gps-coordinates {
+        font-size: 13px;
+        opacity: 0.8;
+        margin-top: 3px;
+    }
+    
+    /* Controls Panel */
+    .controls-panel {
+        background: white;
+        padding: 25px 40px;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+        border-top: 1px solid #e8f0fe;
+    }
+    
+    .control-btn {
+        padding: 14px 28px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        letter-spacing: 0.3px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.25);
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(46, 204, 113, 0.35);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .btn-secondary:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.35);
+    }
+    
+    .btn-outline {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+    
+    .btn-outline:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    /* Alert Panel */
+    .alert-panel {
+        background: white;
+        border-radius: 15px;
+        padding: 25px 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+        border-left: 6px solid #667eea;
+        display: none;
+        animation: slideDown 0.4s ease-out;
+    }
+    
+    .alert-panel.show {
+        display: block;
+    }
+    
+    .alert-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .alert-icon {
+        font-size: 24px;
+        color: #667eea;
+    }
+    
+    .alert-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    .alert-content {
+        font-size: 15px;
+        color: #5d6d7e;
+        line-height: 1.6;
+    }
+    
+    /* Toggle Switch */
+    .view-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+        background: #f8f9fa;
+        padding: 8px;
+        border-radius: 12px;
+    }
+    
+    .toggle-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: #6c757d;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .toggle-btn.active {
+        background: white;
+        color: #667eea;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    /* Card View */
+    #cardView {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    
+    .area-card {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        border: 2px solid #e8f0fe;
+        animation: cardAppear 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .area-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    .area-card.within-geofence {
+        border-color: #2ecc71;
+    }
+    
+    .area-card.outside-geofence {
+        border-color: #e74c3c;
+    }
+    
+    @keyframes cardAppear {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .area-card-header {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        padding: 25px;
+        border-bottom: 2px solid #e8f0fe;
+        position: relative;
+    }
+    
+    .area-card.within-geofence .area-card-header {
+        background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+        border-color: #a3e4bf;
+    }
+    
+    .area-card.outside-geofence .area-card-header {
+        background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+        border-color: #f5b7b1;
+    }
+    
+    .area-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    
+    .area-icon {
+        color: #667eea;
+        font-size: 24px;
+    }
+    
+    .geofence-badge {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .badge-inside {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+    }
+    
+    .badge-outside {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+    }
+    
+    .area-details {
+        padding: 25px;
+    }
+    
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .detail-item {
+        background: #f8fafc;
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+    
+    .detail-item:hover {
+        background: white;
+        border-color: #667eea;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .detail-label {
+        font-size: 13px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .label-icon {
+        color: #667eea;
+        font-size: 14px;
+    }
+    
+    .detail-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .distance-info {
+        font-size: 24px;
+        font-weight: 800;
+        color: #667eea;
+        text-align: center;
+        padding: 15px;
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border-radius: 12px;
+        margin: 15px 0;
+        border: 2px solid #e8f0fe;
+    }
+    
+    .area-card.within-geofence .distance-info {
+        color: #27ae60;
+        background: linear-gradient(135deg, #f0f9f4 0%, #e8f5e9 100%);
+        border-color: #a3e4bf;
+    }
+    
+    .area-card.outside-geofence .distance-info {
+        color: #e74c3c;
+        background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+        border-color: #f5b7b1;
+    }
+    
+    .action-links {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    
+    .map-link {
+        flex: 1;
+        padding: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    
+    .map-link:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Table View */
+    #tableView {
+        display: none;
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 40px;
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    
+    .data-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .data-table th {
+        padding: 22px 25px;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+    
+    .data-table th:first-child {
+        border-radius: 18px 0 0 0;
+    }
+    
+    .data-table th:last-child {
+        border-radius: 0 18px 0 0;
+    }
+    
+    .data-table tbody tr {
+        border-bottom: 1px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+    
+    .data-table tbody tr:hover {
+        background: #f8f9ff;
+        transform: translateX(5px);
+    }
+    
+    .data-table tbody tr.within-geofence {
+        background: #f0f9f4;
+    }
+    
+    .data-table tbody tr.outside-geofence {
+        background: #fff5f5;
+    }
+    
+    .data-table td {
+        padding: 20px 25px;
+        font-size: 15px;
+        color: #2c3e50;
+        border: none;
+    }
+    
+    .table-distance {
+        font-weight: 700;
+        font-size: 16px;
+        color: #667eea;
+    }
+    
+    .table-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-block;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Footer Links */
+    .footer-links {
+        text-align: center;
+        padding: 30px 0;
+    }
+    
+    .home-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 35px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .home-link:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.35);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideDown {
+        from { 
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to { 
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        #cardView {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+    }
+    
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .dashboard-header {
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .location-status {
+            width: 100%;
+            min-width: auto;
+        }
+        
+        .controls-panel {
+            padding: 20px;
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .view-toggle {
+            margin-left: 0;
+            justify-content: center;
+        }
+        
+        #cardView {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .data-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .header-title {
+            font-size: 26px;
+        }
+        
+        .header-icon {
+            font-size: 32px;
+        }
+        
+        .control-btn {
+            padding: 12px 20px;
+            font-size: 14px;
+        }
+        
+        .area-name {
+            font-size: 20px;
+        }
+        
+        .geofence-badge {
+            position: static;
+            margin-top: 10px;
+            display: inline-flex;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="main-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div>
+                <h1 class="header-title">
+                    <span class="header-icon">🗺️</span>
+                    Allocated Collection Areas
+                </h1>
+                <p class="header-subtitle">
+                    Real-time geofencing dashboard showing your assigned waste collection zones and proximity status.
+                    Radius: {{ geofence_radius }} meters
+                </p>
+            </div>
+            
+            <div class="location-status">
+                <div class="status-indicator inactive" id="statusIndicator">
+                    <div class="status-pulse"></div>
+                </div>
+                <div class="status-text">
+                    <span id="statusText">📍 Waiting for GPS location...</span>
+                    <div class="gps-coordinates" id="gpsCoordinates"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <button class="control-btn btn-primary" onclick="getUserLocation()">
+            <span>📍</span>
+            Get Current Location
+        </button>
+        
+        <button class="control-btn btn-secondary" onclick="toggleView('card')">
+            <span>🃏</span>
+            Card View
+        </button>
+        
+        <button class="control-btn btn-secondary" onclick="toggleView('table')">
+            <span>📋</span>
+            Table View
+        </button>
+        
+        <a href="/pickup_home" class="control-btn btn-outline">
+            <span>🏠</span>
+            Back to Dashboard
+        </a>
+    </div>
+    
+    <!-- Alert Panel -->
+    <div class="alert-panel" id="geofenceAlert">
+        <div class="alert-header">
+            <span class="alert-icon">📢</span>
+            <div class="alert-title" id="alertTitle">Geofence Status</div>
+        </div>
+        <div class="alert-content" id="alertContent">
+            Location services are being initialized. Please enable GPS for accurate geofencing.
+        </div>
+    </div>
+    
+    <!-- Card View -->
+    <div id="cardView">
+        {% for i in data %}
+        <div class="area-card" id="area-{{ forloop.counter }}" data-area-index="{{ forloop.counter0 }}">
+            <div class="area-card-header">
+                <div class="area-name">
+                    <span class="area-icon">📍</span>
+                    {{ i.AREA.panchayath }}, {{ i.AREA.district }}
+                </div>
+                <div class="geofence-badge badge-outside" id="badge-{{ forloop.counter }}">
+                    <span>⭕</span>
+                    Outside Collection Zone
+                </div>
+            </div>
+            
+            <div class="area-details">
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <span class="label-icon">🏛️</span>
+                            District
+                        </div>
+                        <div class="detail-value">{{ i.AREA.district }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <span class="label-icon">🏘️</span>
+                            Panchayath
+                        </div>
+                        <div class="detail-value">{{ i.AREA.panchayath }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <span class="label-icon">📅</span>
+                            Allocation Date
+                        </div>
+                        <div class="detail-value">{{ i.date }}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <span class="label-icon">🎯</span>
+                            Coordinates
+                        </div>
+                        <div class="detail-value">{{ i.AREA.latitude|floatformat:4 }}, {{ i.AREA.longitude|floatformat:4 }}</div>
+                    </div>
+                </div>
+                
+{#                <div class="distance-info" id="distance-{{ forloop.counter }}">#}
+{#                    <div>Calculating distance...</div>#}
+{#                    <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">#}
+{#                        <span id="distance-status-{{ forloop.counter }}">Waiting for location</span>#}
+{#                    </div>#}
+{#                </div>#}
+                
+                <div class="action-links">
+                    <a href="https://www.google.com/maps?q={{ i.AREA.latitude }},{{ i.AREA.longitude }}" 
+                       target="_blank" 
+                       class="map-link">
+                        <span>🗺️</span>
+                        Open in Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Table View -->
+    <div id="tableView">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="20%">📍 Location</th>
+                    <th width="15%">🏛️ District</th>
+                    <th width="20%">📏 Distance</th>
+                    <th width="20%">🎯 Status</th>
+                    <th width="15%">📅 Date</th>
+                    <th width="5%">🔗</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in data %}
+                <tr id="tableRow-{{ forloop.counter }}">
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ i.AREA.panchayath }}</strong>
+                        <div style="font-size: 12px; color: #7f8c8d; margin-top: 3px;">
+                            {{ i.AREA.latitude|floatformat:4 }}, {{ i.AREA.longitude|floatformat:4 }}
+                        </div>
+                    </td>
+                    <td>{{ i.AREA.district }}</td>
+                    <td>
+                        <div class="table-distance" id="tableDistance-{{ forloop.counter }}">
+                            Calculating...
+                        </div>
+                    </td>
+                    <td>
+                        <div class="table-badge badge-outside" id="tableStatus-{{ forloop.counter }}">
+                            Outside Zone
+                        </div>
+                    </td>
+                    <td>{{ i.date }}</td>
+                    <td>
+                        <a href="https://www.google.com/maps?q={{ i.AREA.latitude }},{{ i.AREA.longitude }}" 
+                           target="_blank" 
+                           title="View on Maps"
+                           style="color: #667eea; font-size: 18px; display: inline-block; padding: 5px;">
+                            🗺️
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Footer Links -->
+    <div class="footer-links">
+        <a href="/pickup_home" class="home-link">
+            <span>🏠</span>
+            Return to Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+    // Configuration
+    const GEOFENCE_RADIUS = {{ geofence_radius }};
+    const areas = {{ areas_json|safe }};
+    let currentLocation = null;
+    let locationInitialized = false;
+    let currentView = 'card';
+    
+    // Initialize on load
+    window.addEventListener('load', function() {
+        setTimeout(initializeLocation, 1000);
+        initializeCardAnimations();
+    });
+    
+    // Initialize card animations
+    function initializeCardAnimations() {
+        const cards = document.querySelectorAll('.area-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    }
+    
+    // Toggle between card and table view
+    function toggleView(view) {
+        const cardView = document.getElementById('cardView');
+        const tableView = document.getElementById('tableView');
+        const cardBtn = document.querySelector('button[onclick="toggleView(\'card\')"]');
+        const tableBtn = document.querySelector('button[onclick="toggleView(\'table\')"]');
+        
+        if (view === currentView) return;
+        
+        currentView = view;
+        
+        if (view === 'card') {
+            cardView.style.display = 'grid';
+            tableView.style.display = 'none';
+            cardBtn.classList.add('active');
+            tableBtn.classList.remove('active');
+        } else {
+            cardView.style.display = 'none';
+            tableView.style.display = 'block';
+            cardBtn.classList.remove('active');
+            tableBtn.classList.add('active');
+        }
+    }
+    
+    // Initialize location services
+    function initializeLocation() {
+        updateStatusIndicator('inactive', '📍 Tap "Get Current Location" to begin');
+    }
+    
+    // Get user location
+    function getUserLocation() {
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        const gpsCoordinates = document.getElementById('gpsCoordinates');
+        
+        statusIndicator.className = 'status-indicator inactive';
+        statusText.innerHTML = '<span style="display:inline-block; animation: spin 1s linear infinite; margin-right:8px;">🔄</span> Acquiring GPS signal...';
+        gpsCoordinates.textContent = '';
+        
+        if (navigator.geolocation) {
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    // Success callback
+                    currentLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+                    locationInitialized = true;
+                    
+                    updateStatusIndicator('active', '📍 Location acquired successfully');
+                    gpsCoordinates.textContent = 
+                        `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+                    
+                    updateGeofenceStatus();
+                    startLocationUpdates();
+                },
+                function(error) {
+                    // Error callback
+                    let errorMessage = '';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMessage = 'Location access denied. Please enable location services.';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMessage = 'Location information unavailable.';
+                            break;
+                        case error.TIMEOUT:
+                            errorMessage = 'Location request timed out.';
+                            break;
+                        default:
+                            errorMessage = 'Unknown error occurred.';
+                    }
+                    
+                    updateStatusIndicator('inactive', `❌ ${errorMessage}`);
+                    showAlert('Location Error', errorMessage, 'error');
+                },
+                options
+            );
+        } else {
+            updateStatusIndicator('inactive', '❌ Geolocation not supported');
+            showAlert('Browser Error', 'Your browser does not support geolocation. Please use a modern browser.', 'error');
+        }
+    }
+    
+    // Update status indicator
+    function updateStatusIndicator(status, text) {
+        const indicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+        
+        indicator.className = `status-indicator ${status}`;
+        statusText.textContent = text;
+    }
+    
+    // Calculate distance between two coordinates (Haversine formula)
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Earth's radius in meters
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c; // Distance in meters
+    }
+    
+    // Format distance for display
+    function formatDistance(meters) {
+        if (meters < 1000) {
+            return `${meters.toFixed(0)} meters`;
+        } else {
+            return `${(meters / 1000).toFixed(2)} km`;
+        }
+    }
+    
+    // Update geofence status for all areas
+    function updateGeofenceStatus() {
+        if (!currentLocation || !locationInitialized) return;
+        
+        let insideCount = 0;
+        let alertAreas = [];
+        let closestArea = null;
+        let closestDistance = Infinity;
+        
+        areas.forEach((area, index) => {
+            const distance = calculateDistance(
+                currentLocation.latitude,
+                currentLocation.longitude,
+                area.latitude,
+                area.longitude
+            );
+            
+            const isInside = distance <= GEOFENCE_RADIUS;
+            const displayNumber = index + 1;
+            
+            // Update distance display
+            const distanceElement = document.getElementById(`distance-${displayNumber}`);
+            const tableDistanceElement = document.getElementById(`tableDistance-${displayNumber}`);
+            
+            if (distanceElement) {
+                distanceElement.innerHTML = `
+                    <div>${formatDistance(distance)}</div>
+                    <div style="font-size: 14px; opacity: 0.8; margin-top: 5px;">
+                        ${isInside ? '✅ Within collection range' : '⚠️ Outside collection range'}
+                    </div>
+                `;
+            }
+            
+            if (tableDistanceElement) {
+                tableDistanceElement.textContent = formatDistance(distance);
+            }
+            
+            // Update status badges
+            const badgeClass = isInside ? 'badge-inside' : 'badge-outside';
+            const badgeIcon = isInside ? '✅' : '⭕';
+            const badgeText = isInside ? 'Within Collection Zone' : 'Outside Collection Zone';
+            
+            const badge = document.getElementById(`badge-${displayNumber}`);
+            const tableStatus = document.getElementById(`tableStatus-${displayNumber}`);
+            
+            if (badge) {
+                badge.className = `geofence-badge ${badgeClass}`;
+                badge.innerHTML = `${badgeIcon} ${badgeText}`;
+            }
+            
+            if (tableStatus) {
+                tableStatus.className = `table-badge ${badgeClass}`;
+                tableStatus.textContent = isInside ? 'Within Zone' : 'Outside Zone';
+            }
+            
+            // Update card and table row styling
+            const areaCard = document.getElementById(`area-${displayNumber}`);
+            const tableRow = document.getElementById(`tableRow-${displayNumber}`);
+            
+            if (areaCard) {
+                areaCard.classList.remove('within-geofence', 'outside-geofence');
+                areaCard.classList.add(isInside ? 'within-geofence' : 'outside-geofence');
+            }
+            
+            if (tableRow) {
+                tableRow.classList.remove('within-geofence', 'outside-geofence');
+                tableRow.classList.add(isInside ? 'within-geofence' : 'outside-geofence');
+            }
+            
+            // Track statistics
+            if (isInside) {
+                insideCount++;
+                alertAreas.push(`${area.panchayath} (${formatDistance(distance)})`);
+            }
+            
+            // Track closest area
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestArea = area;
+            }
+        });
+        
+        // Update alert panel
+        const alertPanel = document.getElementById('geofenceAlert');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertContent = document.getElementById('alertContent');
+        
+        if (insideCount > 0) {
+            alertTitle.innerHTML = '✅ Within Collection Zone';
+            alertContent.innerHTML = `
+                You are currently within ${insideCount} collection zone${insideCount > 1 ? 's' : ''}:<br>
+                ${alertAreas.map(area => `• ${area}`).join('<br>')}
+            `;
+            alertPanel.style.borderLeftColor = '#2ecc71';
+            alertPanel.style.backgroundColor = '#f0f9f4';
+        } else {
+            alertTitle.innerHTML = '⚠️ Outside Collection Zones';
+            if (closestArea) {
+                alertContent.innerHTML = `
+                    You are currently outside all collection zones.<br>
+                    <strong>Closest zone:</strong> ${closestArea.panchayath} (${formatDistance(closestDistance)})<br>
+                    <em>Please proceed to your assigned collection area.</em>
+                `;
+            } else {
+                alertContent.innerHTML = 'Unable to determine proximity to collection zones.';
+            }
+            alertPanel.style.borderLeftColor = '#e74c3c';
+            alertPanel.style.backgroundColor = '#fff5f5';
+        }
+        
+        alertPanel.classList.add('show');
+    }
+    
+    // Show alert message
+    function showAlert(title, message, type = 'info') {
+        const alertPanel = document.getElementById('geofenceAlert');
+        const alertTitle = document.getElementById('alertTitle');
+        const alertContent = document.getElementById('alertContent');
+        
+        alertTitle.textContent = title;
+        alertContent.textContent = message;
+        
+        switch(type) {
+            case 'error':
+                alertPanel.style.borderLeftColor = '#e74c3c';
+                alertPanel.style.backgroundColor = '#fff5f5';
+                break;
+            case 'success':
+                alertPanel.style.borderLeftColor = '#2ecc71';
+                alertPanel.style.backgroundColor = '#f0f9f4';
+                break;
+            default:
+                alertPanel.style.borderLeftColor = '#667eea';
+                alertPanel.style.backgroundColor = 'white';
+        }
+        
+        alertPanel.classList.add('show');
+    }
+    
+    // Start periodic location updates
+    function startLocationUpdates() {
+        if (navigator.geolocation) {
+            setInterval(() => {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        currentLocation = {
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        
+                        // Update GPS coordinates display
+                        const gpsCoordinates = document.getElementById('gpsCoordinates');
+                        gpsCoordinates.textContent = 
+                            `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+                        
+                        updateGeofenceStatus();
+                    },
+                    function(error) {
+                        console.warn('Location update failed:', error);
+                    },
+                    { enableHighAccuracy: true, maximumAge: 30000 }
+                );
+            }, 30000); // Update every 30 seconds
+        }
+    }
+    
+    // Add CSS animation for spinner
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
+{% endblock %}

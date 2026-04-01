@@ -1,0 +1,978 @@
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Add Product - Recycler Dashboard</title>
+<style>
+    /* Reset & Base Styles */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #2c3e50;
+    }
+    
+    /* Main Container */
+    .product-container {
+        max-width: 900px;
+        margin: 0 auto;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Dashboard Header */
+    .dashboard-header {
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 35px 40px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(39, 174, 96, 0.3);
+        margin-bottom: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .dashboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+    
+    .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    
+    .header-icon {
+        font-size: 42px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 400;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    /* Form Container */
+    .form-container {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .full-width {
+        grid-column: 1 / -1;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 12px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 15.5px;
+        letter-spacing: 0.3px;
+    }
+    
+    .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .label-icon {
+        color: #27ae60;
+        font-size: 18px;
+    }
+    
+    .required {
+        color: #e74c3c;
+        margin-left: 4px;
+    }
+    
+    /* Input Fields */
+    .form-input {
+        width: 100%;
+        padding: 18px 20px;
+        border: 2px solid #e8f8f1;
+        border-radius: 12px;
+        font-size: 16px;
+        color: #2c3e50;
+        background-color: #f9fdfa;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #27ae60;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);
+    }
+    
+    .form-input.valid {
+        border-color: #27ae60;
+        background-color: #f0f9f4;
+    }
+    
+    .form-input.error {
+        border-color: #e74c3c;
+        background-color: #fef7f6;
+    }
+    
+    /* File Upload */
+    .file-upload {
+        position: relative;
+    }
+    
+    .file-input {
+        width: 100%;
+        padding: 18px 20px;
+        border: 2px solid #e8f8f1;
+        border-radius: 12px;
+        font-size: 15px;
+        color: #7f8c8d;
+        background-color: #f9fdfa;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .file-input:hover {
+        border-color: #27ae60;
+        background-color: white;
+    }
+    
+    .file-input::file-selector-button {
+        padding: 12px 25px;
+        margin-right: 20px;
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .file-input::file-selector-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    }
+    
+    /* Price Input */
+    .price-input {
+        position: relative;
+    }
+    
+    .currency-symbol {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #27ae60;
+        font-weight: 700;
+        font-size: 18px;
+    }
+    
+    .price-input .form-input {
+        padding-left: 45px;
+    }
+    
+    /* Quantity Input */
+    .quantity-input {
+        position: relative;
+    }
+    
+    .quantity-unit {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #7f8c8d;
+        font-weight: 600;
+        background: #e8f8f1;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    
+    .quantity-input .form-input {
+        padding-right: 90px;
+    }
+    
+    /* Input Hints and Errors */
+    .input-hint {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 10px;
+        display: block;
+        line-height: 1.5;
+    }
+    
+    .error-message {
+        font-size: 13.5px;
+        color: #e74c3c;
+        margin-top: 10px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    /* Preview Section */
+    .preview-section {
+        background: linear-gradient(135deg, #f9fdfa 0%, #f0f9f4 100%);
+        border-radius: 15px;
+        padding: 30px;
+        border: 2px solid #e8f8f1;
+        margin-bottom: 40px;
+        display: none;
+    }
+    
+    .preview-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    .preview-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #27ae60;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .preview-content {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+    
+    @media (max-width: 768px) {
+        .preview-content {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+    
+    .preview-image {
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 3px solid #e8f8f1;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        color: #ddd;
+    }
+    
+    .preview-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+    
+    .preview-details {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .preview-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .preview-label {
+        font-size: 14px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .preview-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+    
+    /* Submit Section */
+    .submit-section {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 2px solid #e8f8f1;
+    }
+    
+    .submit-btn {
+        padding: 20px 50px;
+        background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 15px;
+        letter-spacing: 0.5px;
+        box-shadow: 0 8px 25px rgba(39, 174, 96, 0.3);
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #219653 0%, #27ae60 100%);
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(39, 174, 96, 0.4);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-2px);
+    }
+    
+    .submit-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .btn-icon {
+        font-size: 22px;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .shake {
+        animation: shake 0.5s ease;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .dashboard-header {
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .form-container {
+            padding: 25px;
+        }
+        
+        .header-title {
+            font-size: 26px;
+        }
+        
+        .header-icon {
+            font-size: 32px;
+        }
+        
+        .submit-btn {
+            padding: 16px 30px;
+            font-size: 16px;
+            width: 100%;
+        }
+        
+        .preview-image {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .dashboard-header {
+            padding: 20px;
+        }
+        
+        .header-title {
+            font-size: 22px;
+        }
+        
+        .form-container {
+            padding: 20px;
+        }
+        
+        .form-input {
+            padding: 15px;
+            font-size: 15px;
+        }
+        
+        .file-input::file-selector-button {
+            padding: 10px 15px;
+            margin-right: 10px;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="product-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <h1 class="header-title">
+                <span class="header-icon">➕</span>
+                Add New Product
+            </h1>
+            <p class="header-subtitle">
+                List your recycled products for sale in the waste management marketplace
+            </p>
+        </div>
+    </div>
+    
+    <!-- Form Container -->
+    <div class="form-container">
+        <!-- Preview Section -->
+        <div class="preview-section" id="previewSection">
+            <div class="preview-title">
+                <span>👁️</span>
+                Product Preview
+            </div>
+            <div class="preview-content">
+                <div class="preview-image" id="previewImage">
+                    <span>🖼️</span>
+                </div>
+                <div class="preview-details">
+                    <div class="preview-item">
+                        <div class="preview-label">Product Name</div>
+                        <div class="preview-value" id="previewName">Product Name</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Price</div>
+                        <div class="preview-value" id="previewPrice">₹ 0.00</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Available Quantity</div>
+                        <div class="preview-value" id="previewQuantity">0 units</div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Product ID</div>
+                        <div class="preview-value">#PROD<span id="previewId">0000</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <form action="/recycler_add_product_post" method="post" enctype="multipart/form-data">
+            <div class="form-grid">
+                <!-- Product Name -->
+                <div class="form-group full-width">
+                    <label class="form-label" for="productName">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📝</span>
+                            Product Name
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text" 
+                           name="textfield" 
+                           id="productName" 
+                           class="form-input"
+                           placeholder="Enter product name (e.g., Recycled Plastic Chairs)"
+                           pattern="[A-Za-z0-9\s\-&]{3,100}"
+                           title="Product name must be 3-100 characters (letters, numbers, spaces, hyphens, &)"
+                           required />
+                    <span class="input-hint">Use descriptive names that clearly identify your recycled product</span>
+                    <span class="error-message" id="nameError">
+                        <span>⚠️</span> Product name must be 3-100 characters
+                    </span>
+                </div>
+                
+                <!-- Product Photo -->
+                <div class="form-group full-width">
+                    <label class="form-label">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📷</span>
+                            Product Photo
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <div class="file-upload">
+                        <input type="file" 
+                               name="fileField" 
+                               id="productPhoto" 
+                               class="file-input"
+                               accept="image/*"
+                               required />
+                    </div>
+                    <span class="input-hint">Upload clear product images (JPEG, PNG, max 5MB, recommended: 800x600px)</span>
+                    <span class="error-message" id="photoError">
+                        <span>⚠️</span> Please upload a valid image file
+                    </span>
+                </div>
+                
+                <!-- Price -->
+                <div class="form-group">
+                    <label class="form-label" for="productPrice">
+                        <span class="label-with-icon">
+                            <span class="label-icon">💰</span>
+                            Price Per Unit
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <div class="price-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" 
+                               name="textfield2" 
+                               id="productPrice" 
+                               class="form-input"
+                               placeholder="0.00"
+                               pattern="^\d+(\.\d{1,2})?$"
+                               title="Enter a valid price (e.g., 299.99)"
+                               required />
+                    </div>
+                    <span class="input-hint">Enter price in Indian Rupees (₹)</span>
+                    <span class="error-message" id="priceError">
+                        <span>⚠️</span> Please enter a valid price (e.g., 299.99)
+                    </span>
+                </div>
+                
+                <!-- Quantity -->
+                <div class="form-group">
+                    <label class="form-label" for="productQuantity">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📦</span>
+                            Available Quantity
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <div class="quantity-input">
+                        <input type="text" 
+                               name="textfield3" 
+                               id="productQuantity" 
+                               class="form-input"
+                               placeholder="0"
+                               pattern="^\d+$"
+                               title="Enter whole number quantity"
+                               required />
+                        <span class="quantity-unit">units</span>
+                    </div>
+                    <span class="input-hint">Enter total available stock quantity</span>
+                    <span class="error-message" id="quantityError">
+                        <span>⚠️</span> Please enter a valid whole number
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <button type="submit" 
+                        name="button" 
+                        id="submitBtn" 
+                        class="submit-btn"
+                        disabled>
+                    <span class="btn-icon">➕</span>
+                    Add Product to Marketplace
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const submitBtn = document.getElementById('submitBtn');
+        const previewSection = document.getElementById('previewSection');
+        const productNameInput = document.getElementById('productName');
+        const productPriceInput = document.getElementById('productPrice');
+        const productQuantityInput = document.getElementById('productQuantity');
+        const productPhotoInput = document.getElementById('productPhoto');
+        
+        // Generate preview ID
+        const previewId = Math.floor(1000 + Math.random() * 9000);
+        document.getElementById('previewId').textContent = previewId;
+        
+        // Initialize form validation
+        initializeFormValidation();
+        
+        // Initialize file preview
+        initializeFilePreview();
+        
+        // Real-time preview updates
+        productNameInput.addEventListener('input', updatePreview);
+        productPriceInput.addEventListener('input', updatePreview);
+        productQuantityInput.addEventListener('input', updatePreview);
+    });
+    
+    function initializeFormValidation() {
+        const inputs = document.querySelectorAll('.form-input, .file-input');
+        
+        inputs.forEach(input => {
+            input.addEventListener('input', validateField);
+            input.addEventListener('blur', validateField);
+            input.addEventListener('change', validateField);
+        });
+    }
+    
+    function validateField(e) {
+        const input = e.target;
+        const errorElement = document.getElementById(input.id.replace('product', '').toLowerCase() + 'Error');
+        
+        // File validation
+        if (input.type === 'file') {
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+                
+                if (file.size > maxSize) {
+                    input.classList.add('error');
+                    input.classList.remove('valid');
+                    if (errorElement) {
+                        errorElement.textContent = '⚠️ Image must be less than 5MB';
+                        errorElement.style.display = 'flex';
+                    }
+                    validateForm();
+                    return false;
+                }
+                
+                if (!validTypes.includes(file.type)) {
+                    input.classList.add('error');
+                    input.classList.remove('valid');
+                    if (errorElement) {
+                        errorElement.textContent = '⚠️ Please upload JPEG, PNG, or WebP image';
+                        errorElement.style.display = 'flex';
+                    }
+                    validateForm();
+                    return false;
+                }
+                
+                // Valid file
+                input.classList.remove('error');
+                input.classList.add('valid');
+                if (errorElement) errorElement.style.display = 'none';
+                validateForm();
+                return true;
+            } else {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+        
+        // Required field validation
+        if (input.hasAttribute('required') && !input.value.trim()) {
+            input.classList.add('error');
+            input.classList.remove('valid');
+            if (errorElement) errorElement.style.display = 'flex';
+            validateForm();
+            return false;
+        }
+        
+        // Pattern validation
+        if (input.hasAttribute('pattern')) {
+            const pattern = new RegExp(input.getAttribute('pattern'));
+            if (!pattern.test(input.value)) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+        
+        // Price validation (additional check)
+        if (input.id === 'productPrice') {
+            const value = parseFloat(input.value);
+            if (isNaN(value) || value <= 0) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) {
+                    errorElement.textContent = '⚠️ Price must be greater than 0';
+                    errorElement.style.display = 'flex';
+                }
+                validateForm();
+                return false;
+            }
+            
+            // Format price to 2 decimal places
+            if (input.value.includes('.')) {
+                const decimalPart = input.value.split('.')[1];
+                if (decimalPart && decimalPart.length > 2) {
+                    input.value = parseFloat(input.value).toFixed(2);
+                }
+            }
+        }
+        
+        // Quantity validation (additional check)
+        if (input.id === 'productQuantity') {
+            const value = parseInt(input.value);
+            if (isNaN(value) || value <= 0) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) {
+                    errorElement.textContent = '⚠️ Quantity must be greater than 0';
+                    errorElement.style.display = 'flex';
+                }
+                validateForm();
+                return false;
+            }
+        }
+        
+        // Valid input
+        input.classList.remove('error');
+        input.classList.add('valid');
+        if (errorElement) errorElement.style.display = 'none';
+        validateForm();
+        return true;
+    }
+    
+    function validateForm() {
+        const requiredFields = document.querySelectorAll('[required]');
+        let isValid = true;
+        
+        // Check all required fields
+        requiredFields.forEach(field => {
+            if (field.type === 'file') {
+                if (!field.files || field.files.length === 0) {
+                    isValid = false;
+                }
+            } else if (!field.value.trim()) {
+                isValid = false;
+            }
+        });
+        
+        // Check if any fields have error class
+        const errorFields = document.querySelectorAll('.error');
+        if (errorFields.length > 0) {
+            isValid = false;
+        }
+        
+        // Update submit button
+        submitBtn.disabled = !isValid;
+        
+        return isValid;
+    }
+    
+    function initializeFilePreview() {
+        const fileInput = document.getElementById('productPhoto');
+        const previewImage = document.getElementById('previewImage');
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // Create image element
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = 'Product Preview';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    
+                    // Clear previous content and add new image
+                    previewImage.innerHTML = '';
+                    previewImage.appendChild(img);
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+    
+    function updatePreview() {
+        const name = document.getElementById('productName').value || 'Product Name';
+        const price = document.getElementById('productPrice').value || '0.00';
+        const quantity = document.getElementById('productQuantity').value || '0';
+        
+        // Update preview values
+        document.getElementById('previewName').textContent = name || 'Product Name';
+        document.getElementById('previewPrice').textContent = `₹ ${parseFloat(price || 0).toFixed(2)}`;
+        document.getElementById('previewQuantity').textContent = `${quantity || 0} units`;
+        
+        // Show preview section if at least one field has value
+        if (name || price !== '0.00' || quantity !== '0') {
+            previewSection.classList.add('active');
+        } else {
+            previewSection.classList.remove('active');
+        }
+    }
+    
+    // Auto-format price input
+    document.getElementById('productPrice').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/[^0-9.]/g, '');
+        
+        // Ensure only one decimal point
+        const decimalCount = value.split('.').length - 1;
+        if (decimalCount > 1) {
+            value = value.substring(0, value.lastIndexOf('.'));
+        }
+        
+        // Limit to 2 decimal places
+        if (value.includes('.')) {
+            const parts = value.split('.');
+            if (parts[1].length > 2) {
+                parts[1] = parts[1].substring(0, 2);
+                value = parts.join('.');
+            }
+        }
+        
+        e.target.value = value;
+    });
+    
+    // Auto-format quantity input (numbers only)
+    document.getElementById('productQuantity').addEventListener('input', function(e) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        
+        // Limit to reasonable quantity
+        const maxQuantity = 999999;
+        let value = parseInt(e.target.value) || 0;
+        if (value > maxQuantity) {
+            e.target.value = maxQuantity;
+        }
+    });
+    
+    // Form submission handling
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!validateForm()) {
+            e.preventDefault();
+            
+            // Find first error field
+            const errorField = document.querySelector('.error');
+            if (errorField) {
+                errorField.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // Add shake animation
+                errorField.classList.add('shake');
+                setTimeout(() => {
+                    errorField.classList.remove('shake');
+                }, 500);
+                
+                // Show error message
+                alert('Please fix all errors before submitting. Check fields marked in red.');
+            }
+            return false;
+        }
+        
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span> Adding Product...';
+        
+        // In real application, form would submit normally
+        // For demo, we'll simulate a delay
+        setTimeout(() => {
+            submitBtn.innerHTML = '<span class="btn-icon">✅</span> Product Added Successfully!';
+            submitBtn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+            
+            // Redirect after success (in real app)
+            // setTimeout(() => {
+            //     window.location.href = '/recycler_products';
+            // }, 1500);
+        }, 2000);
+        
+        return true;
+    });
+    
+    // Add character counter for product name
+    const nameInput = document.getElementById('productName');
+    nameInput.addEventListener('input', function() {
+        const maxLength = 100;
+        const currentLength = this.value.length;
+        const counter = document.getElementById('nameCounter') || createCounter();
+        
+        counter.textContent = `${currentLength}/${maxLength} characters`;
+        counter.style.color = currentLength > maxLength ? '#e74c3c' : currentLength >= maxLength * 0.8 ? '#f39c12' : '#27ae60';
+    });
+    
+    function createCounter() {
+        const counter = document.createElement('div');
+        counter.id = 'nameCounter';
+        counter.style.cssText = 'font-size: 12px; color: #7f8c8d; margin-top: 5px; text-align: right;';
+        nameInput.parentElement.appendChild(counter);
+        return counter;
+    }
+</script>
+</body>
+</html>
+{% endblock %}

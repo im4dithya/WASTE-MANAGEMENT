@@ -1,0 +1,258 @@
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Edit Waste Type - Waste Management System</title>
+<style>
+    .form-container {
+        max-width: 600px;
+        margin: 30px auto;
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    
+    .form-title {
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #ecf0f1;
+        font-size: 24px;
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #34495e;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e6ed;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #333;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #3498db;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .form-input.valid {
+        border-color: #27ae60;
+    }
+    
+    .form-input.error {
+        border-color: #e74c3c;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #2980b9, #1c5d87);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+    
+    .input-hint {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-container {
+            margin: 15px;
+            padding: 20px;
+        }
+    }
+    
+    .icon {
+        color: #3498db;
+        margin-right: 8px;
+    }
+</style>
+</head>
+
+<body>
+<div class="form-container">
+    <div class="form-title">
+        <span class="icon">♻️</span> Edit Waste Type
+    </div>
+    
+    <form id="form1" name="form1" method="post" action="/edit_waste_type_post/{{ data.id }}">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="waste">
+                    <span class="icon">🗑️</span> Waste Type
+                </label>
+                <input type="text" 
+                       name="textfield" 
+                       id="waste" 
+                       class="form-input"
+                       value="{{ data.waste }}"
+                       pattern="[A-Za-z\s]{2,50}"
+                       title="Enter a valid waste type (2-50 letters)"
+                       required />
+                <span class="input-hint">Enter waste type (e.g., Plastic, Paper, Metal)</span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="amount">
+                    <span class="icon">⚖️</span> Amount
+                </label>
+                <input type="text" 
+                       name="textfield2" 
+                       id="amount" 
+                       class="form-input"
+                       value="{{ data.amount }}"
+                       pattern="\d+(\.\d{1,2})?"
+                       title="Enter a valid amount (numbers and optional decimal)"
+                       required />
+                <span class="input-hint">Enter amount in kilograms or units</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="description">
+                <span class="icon">📝</span> Description
+            </label>
+            <input type="text" 
+                   name="textfield3" 
+                   id="description" 
+                   class="form-input"
+                   value="{{ data.note }}"
+                   maxlength="200"
+                   title="Maximum 200 characters" />
+            <span class="input-hint">Brief description of the waste type (optional)</span>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label" for="reward">
+                <span class="icon">💰</span> Reward Points
+            </label>
+            <input type="text" 
+                   name="textfield4" 
+                   id="reward" 
+                   class="form-input"
+                   value="{{ data.reward }}"
+                   pattern="\d+"
+                   title="Enter whole number reward points"
+                   required />
+            <span class="input-hint">Reward points per unit (whole numbers only)</span>
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" name="button" id="button" class="submit-btn">
+                <span class="icon">✓</span> Update Waste Type
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Add real-time validation feedback
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.form-input');
+        
+        inputs.forEach(input => {
+            // Check initial validity
+            checkValidity(input);
+            
+            // Add event listeners for real-time validation
+            input.addEventListener('input', function() {
+                checkValidity(this);
+            });
+            
+            input.addEventListener('blur', function() {
+                checkValidity(this);
+            });
+        });
+        
+        function checkValidity(input) {
+            if (input.value === '') {
+                input.classList.remove('valid', 'error');
+                return;
+            }
+            
+            if (input.checkValidity()) {
+                input.classList.remove('error');
+                input.classList.add('valid');
+            } else {
+                input.classList.remove('valid');
+                input.classList.add('error');
+            }
+        }
+        
+        // Form submission validation
+        document.getElementById('form1').addEventListener('submit', function(e) {
+            let isValid = true;
+            const requiredInputs = this.querySelectorAll('[required]');
+            
+            requiredInputs.forEach(input => {
+                if (!input.value.trim()) {
+                    input.classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields correctly.');
+            }
+        });
+    });
+</script>
+</body>
+</html>
+{% endblock %}

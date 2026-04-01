@@ -1,0 +1,1163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Register - Waste Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Reset & Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: #2c3e50;
+    }
+
+    /* Main Container */
+    .register-container {
+        width: 100%;
+        max-width: 1000px;
+        display: flex;
+        background: white;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    /* Left Panel - Welcome & Info */
+    .left-panel {
+        flex: 1;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .left-panel::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .left-panel::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .welcome-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+
+    .welcome-icon {
+        font-size: 72px;
+        margin-bottom: 30px;
+        display: block;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .welcome-title {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: 0.5px;
+    }
+
+    .welcome-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        line-height: 1.6;
+        margin-bottom: 40px;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .features-list {
+        text-align: left;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .feature-text {
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    /* Right Panel - Registration Form */
+    .right-panel {
+        flex: 1.2;
+        padding: 60px 50px;
+        background: white;
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .form-title {
+        font-size: 32px;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .form-subtitle {
+        color: #7f8c8d;
+        font-size: 15px;
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 10px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 14.5px;
+        letter-spacing: 0.3px;
+    }
+
+    .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .label-icon {
+        color: #667eea;
+        font-size: 16px;
+    }
+
+    .required {
+        color: #e74c3c;
+        margin-left: 4px;
+    }
+
+    /* Input Fields */
+    .form-input {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        font-size: 15px;
+        color: #2c3e50;
+        background-color: #f8fafc;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-input.valid {
+        border-color: #2ecc71;
+        background-color: #f0f9f4;
+    }
+
+    .form-input.error {
+        border-color: #e74c3c;
+        background-color: #fef7f6;
+    }
+
+    /* Select Field */
+    .form-select {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        font-size: 15px;
+        color: #2c3e50;
+        background-color: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        padding-right: 50px;
+    }
+
+    .form-select:focus {
+        outline: none;
+        border-color: #667eea;
+        background-color: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    /* File Upload */
+    .file-upload {
+        position: relative;
+    }
+
+    .file-input {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid #e8f0fe;
+        border-radius: 12px;
+        font-size: 15px;
+        color: #7f8c8d;
+        background-color: #f8fafc;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .file-input:hover {
+        border-color: #667eea;
+        background-color: white;
+    }
+
+    .file-input::file-selector-button {
+        padding: 10px 20px;
+        margin-right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .file-input::file-selector-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    /* Password Strength */
+    .password-strength {
+        height: 4px;
+        background: #ecf0f1;
+        border-radius: 2px;
+        margin-top: 8px;
+        overflow: hidden;
+    }
+
+    .strength-bar {
+        height: 100%;
+        width: 0%;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+    }
+
+    .strength-weak { background: #e74c3c; }
+    .strength-medium { background: #f39c12; }
+    .strength-strong { background: #2ecc71; }
+
+    .strength-text {
+        font-size: 12px;
+        margin-top: 5px;
+        display: block;
+    }
+
+    .strength-text.weak { color: #e74c3c; }
+    .strength-text.medium { color: #f39c12; }
+    .strength-text.strong { color: #2ecc71; }
+
+    /* Input Hints and Errors */
+    .input-hint {
+        font-size: 12.5px;
+        color: #7f8c8d;
+        margin-top: 8px;
+        display: block;
+        line-height: 1.5;
+    }
+
+    .error-message {
+        font-size: 13px;
+        color: #e74c3c;
+        margin-top: 8px;
+        display: none;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Terms & Conditions */
+    .terms-section {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        border: 2px solid #e8f0fe;
+    }
+
+    .terms-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        cursor: pointer;
+    }
+
+    .terms-checkbox {
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #e8f0fe;
+        border-radius: 4px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    .terms-text {
+        font-size: 14px;
+        color: #5d6d7e;
+        line-height: 1.6;
+    }
+
+    .terms-link {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .terms-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Submit Button */
+    .submit-section {
+        text-align: center;
+    }
+
+    .submit-btn {
+        padding: 18px 50px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        letter-spacing: 0.5px;
+        min-width: 200px;
+        justify-content: center;
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+    }
+
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(46, 204, 113, 0.4);
+    }
+
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+
+    .submit-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-icon {
+        font-size: 20px;
+    }
+
+    /* Login Link */
+    .login-link {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 15px;
+        color: #7f8c8d;
+    }
+
+    .login-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .shake {
+        animation: shake 0.5s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+        .register-container {
+            flex-direction: column;
+            max-width: 600px;
+        }
+
+        .left-panel {
+            padding: 40px 30px;
+        }
+
+        .right-panel {
+            padding: 40px 30px;
+        }
+
+        .welcome-icon {
+            font-size: 60px;
+        }
+
+        .welcome-title {
+            font-size: 30px;
+        }
+
+        .form-title {
+            font-size: 28px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        body {
+            padding: 15px;
+        }
+
+        .left-panel,
+        .right-panel {
+            padding: 30px 20px;
+        }
+
+        .welcome-title {
+            font-size: 26px;
+        }
+
+        .form-title {
+            font-size: 24px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px 30px;
+        }
+    }
+</style>
+<script type="text/javascript">
+function MM_jumpMenu(targ,selObj,restore){ //v3.0
+  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+  if (restore) selObj.selectedIndex=0;
+}
+</script>
+</head>
+<body>
+<div class="register-container">
+    <!-- Left Panel - Welcome & Information -->
+    <div class="left-panel">
+        <div class="welcome-content">
+            <div class="welcome-icon">♻️</div>
+            <h1 class="welcome-title">Join Our Green Initiative</h1>
+            <p class="welcome-subtitle">
+                Become part of the waste management revolution. Register as a recycler or pickup personnel to contribute to a cleaner environment.
+            </p>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>Secure Registration</strong><br>
+                        Your data is protected with industry-standard security
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>Quick Process</strong><br>
+                        Complete registration in just a few minutes
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="feature-text">
+                        <strong>24/7 Support</strong><br>
+                        Get help anytime during the registration process
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel - Registration Form -->
+    <div class="right-panel">
+        <div class="form-header">
+            <h2 class="form-title">Create Account</h2>
+            <p class="form-subtitle">Fill in your details to join our waste management network</p>
+        </div>
+
+        <form action="/recycler_register_post" method="post" enctype="multipart/form-data" name="form1" id="form1">
+            <div class="form-grid">
+                <!-- Name Field -->
+                <div class="form-group">
+                    <label class="form-label" for="name">
+                        <span class="label-with-icon">
+                            <span class="label-icon">👤</span>
+                            Full Name
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text"
+                           name="textfield"
+                           id="name"
+                           class="form-input"
+                           placeholder="Enter your full name"
+                           pattern="[A-Za-z\s]{2,50}"
+                           title="Please enter a valid name (2-50 letters)"
+                           required />
+                    <span class="input-hint">Enter your legal name as per ID proof</span>
+                    <span class="error-message" id="nameError">
+                        <span>⚠️</span> Please enter a valid name
+                    </span>
+                </div>
+
+                <!-- Phone Field -->
+                <div class="form-group">
+                    <label class="form-label" for="phone">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📱</span>
+                            Phone Number
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text"
+                           name="textfield2"
+                           id="phone"
+                           class="form-input"
+                           placeholder="Enter 10-digit phone number"
+                           pattern="[0-9]{10}"
+                           title="Enter a valid 10-digit phone number"
+                           required />
+                    <span class="input-hint">We'll send OTP verification to this number</span>
+                    <span class="error-message" id="phoneError">
+                        <span>⚠️</span> Please enter a valid 10-digit number
+                    </span>
+                </div>
+
+                <!-- Email Field -->
+                <div class="form-group">
+                    <label class="form-label" for="email">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📧</span>
+                            Email Address
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="email"
+                           name="textfield3"
+                           id="email"
+                           class="form-input"
+                           placeholder="Enter your email address"
+                           pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                           title="Enter a valid email address"
+                           required />
+                    <span class="input-hint">Used for account notifications and recovery</span>
+                    <span class="error-message" id="emailError">
+                        <span>⚠️</span> Please enter a valid email address
+                    </span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <span class="label-with-icon">
+                            <span class="label-icon">🔐</span>
+                            Password
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="password"
+                           name="textfield4"
+                           id="password"
+                           class="form-input"
+                           placeholder="Create a strong password"
+                           pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                           title="Minimum 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character"
+                           required />
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <span class="strength-text" id="strengthText">Password strength</span>
+                    <span class="input-hint">Must contain: 8+ chars, uppercase, lowercase, number, special character</span>
+                    <span class="error-message" id="passwordError">
+                        <span>⚠️</span> Password does not meet requirements
+                    </span>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">
+                        <span class="label-with-icon">
+                            <span class="label-icon">✓</span>
+                            Confirm Password
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="password"
+                           name="textfield5"
+                           id="confirmPassword"
+                           class="form-input"
+                           placeholder="Re-enter your password"
+                           required />
+                    <span class="input-hint">Must match the password above</span>
+                    <span class="error-message" id="confirmPasswordError">
+                        <span>⚠️</span> Passwords do not match
+                    </span>
+                </div>
+
+                <!-- Type Field -->
+                <div class="form-group">
+                    <label class="form-label" for="type">
+                        <span class="label-with-icon">
+                            <span class="label-icon">🏷️</span>
+                            Account Type
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <select name="select" id="type" class="form-select">
+                        <option value="recycler">♻️ Recycler - Process waste materials</option>
+                        <option value="pickup">🚚 Pickup Personnel - Collect waste from users</option>
+                    </select>
+                    <span class="input-hint">Choose your role in the waste management system</span>
+                </div>
+
+                <!-- Photo Upload Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📷</span>
+                            Profile Photo
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <div class="file-upload">
+                        <input type="file"
+                               name="fileField"
+                               id="photo"
+                               class="file-input"
+                               accept="image/*"
+                               required />
+                    </div>
+                    <span class="input-hint">Upload a clear photo for identification (max: 5MB)</span>
+                    <span class="error-message" id="photoError">
+                        <span>⚠️</span> Please upload a valid image file
+                    </span>
+                </div>
+
+                <!-- Proof Upload Field -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <span class="label-with-icon">
+                            <span class="label-icon">📄</span>
+                            ID Proof Document
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <div class="file-upload">
+                        <input type="file"
+                               name="fileField2"
+                               id="proof"
+                               class="file-input"
+                               accept=".pdf,.jpg,.jpeg,.png"
+                               required />
+                    </div>
+                    <span class="input-hint">Upload Aadhaar, PAN, or other government ID (PDF or Image)</span>
+                    <span class="error-message" id="proofError">
+                        <span>⚠️</span> Please upload a valid document
+                    </span>
+                </div>
+            </div>
+
+            <!-- Terms & Conditions -->
+            <div class="terms-section">
+                <label class="terms-label">
+                    <input type="checkbox"
+                           name="terms"
+                           id="terms"
+                           class="terms-checkbox"
+                           required />
+                    <div class="terms-text">
+                        I agree to the <a href="/terms" class="terms-link" target="_blank">Terms of Service</a> and <a href="/privacy" class="terms-link" target="_blank">Privacy Policy</a>. I confirm that all information provided is accurate and I accept the terms of waste management partnership.
+                        <span class="required">*</span>
+                    </div>
+                </label>
+                <span class="error-message" id="termsError">
+                    <span>⚠️</span> You must accept the terms and conditions
+                </span>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-section">
+                <button type="submit"
+                        name="button"
+                        id="submitBtn"
+                        class="submit-btn"
+                        disabled>
+                    <span class="btn-icon">✓</span>
+                    Create Account
+                </button>
+            </div>
+
+            <!-- Login Link -->
+            <div class="login-link">
+                Already have an account? <a href="/login">Sign in here</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form1');
+        const submitBtn = document.getElementById('submitBtn');
+        const termsCheckbox = document.getElementById('terms');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+
+        // Initialize form validation
+        initializeFormValidation();
+
+        // Password strength checker
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            validateConfirmPassword();
+        });
+
+        // Confirm password validation
+        confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+        // Terms checkbox validation
+        termsCheckbox.addEventListener('change', validateForm);
+
+        // File input preview and validation
+        initializeFileInputs();
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                e.preventDefault();
+                showFormErrors();
+            }
+        });
+    });
+
+    function initializeFormValidation() {
+        const inputs = document.querySelectorAll('.form-input, .form-select, .file-input');
+
+        inputs.forEach(input => {
+            input.addEventListener('input', validateField);
+            input.addEventListener('blur', validateField);
+            input.addEventListener('change', validateField);
+        });
+    }
+
+    function validateField(e) {
+        const input = e.target;
+        const errorElement = document.getElementById(input.id + 'Error');
+
+        // Skip validation for empty optional fields
+        if (!input.hasAttribute('required') && !input.value.trim()) {
+            input.classList.remove('error', 'valid');
+            if (errorElement) errorElement.style.display = 'none';
+            validateForm();
+            return true;
+        }
+
+        // Validate required fields
+        if (input.hasAttribute('required') && !input.value.trim()) {
+            input.classList.add('error');
+            input.classList.remove('valid');
+            if (errorElement) errorElement.style.display = 'flex';
+            validateForm();
+            return false;
+        }
+
+        // File validation
+        if (input.type === 'file') {
+            if (input.files.length > 0) {
+                const file = input.files[0];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+
+                if (file.size > maxSize) {
+                    input.classList.add('error');
+                    input.classList.remove('valid');
+                    if (errorElement) {
+                        errorElement.textContent = '⚠️ File size must be less than 5MB';
+                        errorElement.style.display = 'flex';
+                    }
+                    validateForm();
+                    return false;
+                }
+
+                // Check file type for photo
+                if (input.id === 'photo' && !file.type.startsWith('image/')) {
+                    input.classList.add('error');
+                    input.classList.remove('valid');
+                    if (errorElement) {
+                        errorElement.textContent = '⚠️ Please upload an image file';
+                        errorElement.style.display = 'flex';
+                    }
+                    validateForm();
+                    return false;
+                }
+
+                // Check file type for proof
+                if (input.id === 'proof') {
+                    const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        input.classList.add('error');
+                        input.classList.remove('valid');
+                        if (errorElement) {
+                            errorElement.textContent = '⚠️ Please upload PDF or image file';
+                            errorElement.style.display = 'flex';
+                        }
+                        validateForm();
+                        return false;
+                    }
+                }
+
+                // Valid file
+                input.classList.remove('error');
+                input.classList.add('valid');
+                if (errorElement) errorElement.style.display = 'none';
+                validateForm();
+                return true;
+            } else {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+
+        // Pattern validation
+        if (input.hasAttribute('pattern')) {
+            const pattern = new RegExp(input.getAttribute('pattern'));
+            if (!pattern.test(input.value)) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+
+        // Email validation
+        if (input.type === 'email') {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(input.value)) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+
+        // Phone validation
+        if (input.id === 'phone') {
+            const phonePattern = /^[0-9]{10}$/;
+            if (!phonePattern.test(input.value)) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'flex';
+                validateForm();
+                return false;
+            }
+        }
+
+        // Valid input
+        input.classList.remove('error');
+        input.classList.add('valid');
+        if (errorElement) errorElement.style.display = 'none';
+        validateForm();
+        return true;
+    }
+
+    function checkPasswordStrength(password) {
+        let strength = 0;
+
+        // Check requirements
+        const hasLength = password.length >= 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSpecial = /[@$!%*?&]/.test(password);
+
+        // Calculate strength score
+        strength += hasLength ? 1 : 0;
+        strength += hasUpper ? 1 : 0;
+        strength += hasLower ? 1 : 0;
+        strength += hasNumber ? 1 : 0;
+        strength += hasSpecial ? 1 : 0;
+
+        // Update strength meter
+        let strengthPercentage = (strength / 5) * 100;
+        let strengthClass = '';
+        let strengthLabel = '';
+
+        if (strength === 0) {
+            strengthLabel = 'No password';
+            strengthClass = '';
+        } else if (strength <= 2) {
+            strengthLabel = 'Weak';
+            strengthClass = 'strength-weak';
+        } else if (strength <= 4) {
+            strengthLabel = 'Medium';
+            strengthClass = 'strength-medium';
+        } else {
+            strengthLabel = 'Strong';
+            strengthClass = 'strength-strong';
+        }
+
+        strengthBar.style.width = strengthPercentage + '%';
+        strengthBar.className = 'strength-bar ' + strengthClass;
+        strengthText.textContent = strengthLabel;
+        strengthText.className = 'strength-text ' + (strengthClass ? strengthClass.replace('strength-', '') : '');
+    }
+
+    function validateConfirmPassword() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorElement = document.getElementById('confirmPasswordError');
+        const confirmInput = document.getElementById('confirmPassword');
+
+        if (!confirmPassword) {
+            confirmInput.classList.remove('error', 'valid');
+            if (errorElement) errorElement.style.display = 'none';
+            return false;
+        }
+
+        if (password !== confirmPassword) {
+            confirmInput.classList.add('error');
+            confirmInput.classList.remove('valid');
+            if (errorElement) {
+                errorElement.textContent = '⚠️ Passwords do not match';
+                errorElement.style.display = 'flex';
+            }
+            validateForm();
+            return false;
+        } else {
+            confirmInput.classList.remove('error');
+            confirmInput.classList.add('valid');
+            if (errorElement) errorElement.style.display = 'none';
+            validateForm();
+            return true;
+        }
+    }
+
+    function validateForm() {
+        const requiredFields = document.querySelectorAll('[required]');
+        let isValid = true;
+
+        // Check all required fields
+        requiredFields.forEach(field => {
+            if (field.type === 'checkbox') {
+                if (!field.checked) {
+                    isValid = false;
+                }
+            } else if (field.type === 'file') {
+                if (!field.files || field.files.length === 0) {
+                    isValid = false;
+                }
+            } else if (!field.value.trim()) {
+                isValid = false;
+            }
+        });
+
+        // Check if any fields have error class
+        const errorFields = document.querySelectorAll('.error');
+        if (errorFields.length > 0) {
+            isValid = false;
+        }
+
+        // Check password match
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        if (password !== confirmPassword) {
+            isValid = false;
+        }
+
+        // Update submit button
+        submitBtn.disabled = !isValid;
+
+        return isValid;
+    }
+
+    function initializeFileInputs() {
+        const fileInputs = document.querySelectorAll('.file-input');
+
+        fileInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const fileName = this.files[0].name;
+                    const fileSize = (this.files[0].size / 1024 / 1024).toFixed(2);
+
+                    // Show file info
+                    const parent = this.parentElement;
+                    const existingInfo = parent.querySelector('.file-info');
+                    if (existingInfo) existingInfo.remove();
+
+                    const fileInfo = document.createElement('div');
+                    fileInfo.className = 'file-info';
+                    fileInfo.innerHTML = `
+                        <div style="font-size: 12px; color: #27ae60; margin-top: 5px;">
+                            <i class="fas fa-check-circle"></i>
+                            ${fileName} (${fileSize} MB)
+                        </div>
+                    `;
+                    parent.appendChild(fileInfo);
+                }
+            });
+        });
+    }
+
+    function showFormErrors() {
+        const errorFields = document.querySelectorAll('.error');
+        if (errorFields.length > 0) {
+            // Scroll to first error
+            errorFields[0].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            // Add shake animation
+            errorFields[0].classList.add('shake');
+            setTimeout(() => {
+                errorFields[0].classList.remove('shake');
+            }, 500);
+
+            // Show error message
+            alert('Please fix all errors before submitting. Check fields marked in red.');
+        } else {
+            // Check terms
+            const termsCheckbox = document.getElementById('terms');
+            if (!termsCheckbox.checked) {
+                document.getElementById('termsError').style.display = 'flex';
+                termsCheckbox.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                alert('You must accept the terms and conditions.');
+            }
+        }
+    }
+
+    // Auto-format phone number
+    document.getElementById('phone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.substring(0, 10);
+        e.target.value = value;
+    });
+
+    // Auto-format name (capitalize first letter of each word)
+    document.getElementById('name').addEventListener('blur', function() {
+        if (this.value) {
+            this.value = this.value.toLowerCase()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+    });
+</script>
+</body>
+</html>

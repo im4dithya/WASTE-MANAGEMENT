@@ -1,0 +1,592 @@
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders Management - Waste Management</title>
+    <style>
+        .orders-container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #27ae60;
+        }
+        
+        .page-header h2 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-header h2:before {
+            content: "📊";
+            font-size: 24px;
+        }
+        
+        .page-header p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 15px;
+        }
+        
+        .filters-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .filters-title {
+            color: #34495e;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filters-title:before {
+            content: "⚙️";
+            font-size: 14px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            color: #34495e;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .orders-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .table-title {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .table-title:before {
+            content: "📦";
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+        }
+        
+        th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th:last-child {
+            border-right: none;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        td {
+            padding: 16px 12px;
+            color: #34495e;
+            vertical-align: middle;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 100px;
+            text-align: center;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-processing {
+            background: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        
+        .status-collected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-delivered {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .amount {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 15px;
+        }
+        
+        .payment-mode {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+        
+        .payment-online {
+            color: #27ae60;
+        }
+        
+        .payment-cod {
+            color: #e67e22;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .action-btn.update {
+            background: #3498db;
+            color: white;
+        }
+        
+        .action-btn.update:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .action-btn.view {
+            background: #f8f9fa;
+            color: #34495e;
+            border: 1px solid #ddd;
+        }
+        
+        .action-btn.view:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        .divider {
+            color: #ddd;
+            font-weight: 300;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            color: #34495e;
+            margin: 0 0 10px 0;
+        }
+        
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 15px;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .divider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orders-container">
+        <div class="page-header">
+            <h2>Orders Management</h2>
+            <p>Manage and track all waste collection orders</p>
+        </div>
+        
+        <div class="stats-summary">
+            <div class="stat-item">
+                <div class="stat-value">{{ data|length }}</div>
+                <div class="stat-label">Total Orders</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ pending_count|default:"0" }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ processing_count|default:"0" }}</div>
+                <div class="stat-label">Processing</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ completed_count|default:"0" }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+        
+        <div class="filters-section">
+            <div class="filters-title">Filter by Status</div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Orders ({{ data|length }})</button>
+                <button class="filter-btn" data-filter="pending">Pending ({{ pending_count|default:"0" }})</button>
+                <button class="filter-btn" data-filter="processing">Processing ({{ processing_count|default:"0" }})</button>
+                <button class="filter-btn" data-filter="collected">Collected ({{ collected_count|default:"0" }})</button>
+                <button class="filter-btn" data-filter="delivered">Delivered ({{ delivered_count|default:"0" }})</button>
+            </div>
+        </div>
+        
+        <div class="orders-table-container">
+            <div class="table-header">
+                <div class="table-title">All Orders</div>
+                <div class="table-actions">
+                    <input type="text" class="search-box" placeholder="Search by user, recycler, or status..." id="searchInput">
+                </div>
+            </div>
+            
+            {% if data %}
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Recycler</th>
+                        <th>Payment Mode</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr data-status="{{ i.status|lower }}">
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">{{ i.USER.name|first|upper }}</div>
+                                <span>{{ i.USER.name }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if i.status == 'pending' %}
+                                <span class="status-badge status-pending">⏳ {{ i.status }}</span>
+                            {% elif i.status == 'processing' %}
+                                <span class="status-badge status-processing">⚙️ {{ i.status }}</span>
+                            {% elif i.status == 'collected' %}
+                                <span class="status-badge status-collected">✅ {{ i.status }}</span>
+                            {% elif i.status == 'delivered' %}
+                                <span class="status-badge status-delivered">🚚 {{ i.status }}</span>
+                            {% else %}
+                                <span class="status-badge">{{ i.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ i.RECYCLER.name }}</td>
+                        <td>
+                            <div class="payment-mode {% if i.paymentmode == 'Online' %}payment-online{% else %}payment-cod{% endif %}">
+                                {% if i.paymentmode == 'Online' %}
+                                    💳
+                                {% else %}
+                                    💵
+                                {% endif %}
+                                {{ i.paymentmode }}
+                            </div>
+                        </td>
+                        <td class="amount">₹{{ i.amount }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/update_status/{{ i.id }}" class="action-btn update">
+                                    <span>🔄</span>
+                                    Update Status
+                                </a>
+                                <span class="divider">|</span>
+                                <a href="/view_ordered_items/{{ i.id }}" class="action-btn view">
+                                    <span>👁️</span>
+                                    View Items
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>No Orders Found</h3>
+                <p>There are no orders in the system yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#ordersTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const orderRows = document.querySelectorAll('#ordersTable tbody tr');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filter = this.getAttribute('data-filter');
+                
+                // Show/hide rows based on filter
+                orderRows.forEach(row => {
+                    if (filter === 'all') {
+                        row.style.display = '';
+                    } else {
+                        const status = row.getAttribute('data-status');
+                        row.style.display = status.includes(filter) ? '' : 'none';
+                    }
+                });
+            });
+        });
+        
+        // Add zebra striping to table rows
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('#ordersTable tbody tr');
+            rows.forEach((row, index) => {
+                if (index % 2 === 0) {
+                    row.style.backgroundColor = '#fafafa';
+                }
+            });
+            
+            // Initialize status counts if not provided
+            if (!document.querySelector('[data-filter="pending"]').textContent.includes('(')) {
+                const pendingCount = document.querySelectorAll('[data-status*="pending"]').length;
+                const processingCount = document.querySelectorAll('[data-status*="processing"]').length;
+                const collectedCount = document.querySelectorAll('[data-status*="collected"]').length;
+                const deliveredCount = document.querySelectorAll('[data-status*="delivered"]').length;
+                
+                document.querySelector('[data-filter="pending"]').textContent = `Pending (${pendingCount})`;
+                document.querySelector('[data-filter="processing"]').textContent = `Processing (${processingCount})`;
+                document.querySelector('[data-filter="collected"]').textContent = `Collected (${collectedCount})`;
+                document.querySelector('[data-filter="delivered"]').textContent = `Delivered (${deliveredCount})`;
+                
+                // Update stats summary
+                document.querySelectorAll('.stat-item')[1].querySelector('.stat-value').textContent = pendingCount;
+                document.querySelectorAll('.stat-item')[2].querySelector('.stat-value').textContent = processingCount;
+                document.querySelectorAll('.stat-item')[3].querySelector('.stat-value').textContent = collectedCount + deliveredCount;
+            }
+        });
+        
+        // Auto-refresh notification for pending orders
+        setInterval(function() {
+            const pendingOrders = document.querySelectorAll('[data-status*="pending"]');
+            if (pendingOrders.length > 0) {
+                const header = document.querySelector('.table-title');
+                if (!header.classList.contains('blink')) {
+                    header.classList.add('blink');
+                    setTimeout(() => header.classList.remove('blink'), 2000);
+                }
+            }
+        }, 30000); // Check every 30 seconds
+        
+        // Add CSS for blinking animation
+        const style = document.createElement('style');
+        style.textContent = `
+            .blink {
+                animation: blink 1s ease-in-out 2;
+            }
+            @keyframes blink {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.5; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+{% endblock %}

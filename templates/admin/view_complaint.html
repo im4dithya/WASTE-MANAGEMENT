@@ -1,0 +1,367 @@
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Complaints Management - Waste Management System</title>
+<style>
+    /* Waste Management Theme Colors */
+    :root {
+        --primary-green: #2E7D32;
+        --light-green: #4CAF50;
+        --dark-green: #1B5E20;
+        --neutral-gray: #f5f5f5;
+        --text-dark: #333333;
+        --white: #ffffff;
+        --accent-blue: #2196F3;
+        --warning: #FF9800;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        background-color: #f8f9fa;
+        color: var(--text-dark);
+        line-height: 1.6;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 15px;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2);
+    }
+    
+    .header h1 {
+        font-size: 24px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .header h1:before {
+        content: "♻️";
+        font-size: 28px;
+    }
+    
+    .card {
+        background: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        padding: 20px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+    }
+    
+    thead {
+        background-color: var(--primary-green);
+        color: white;
+    }
+    
+    th {
+        padding: 16px 12px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+    
+    tbody tr {
+        border-bottom: 1px solid #e0e0e0;
+        transition: all 0.3s ease;
+    }
+    
+    tbody tr:hover {
+        background-color: rgba(76, 175, 80, 0.05);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    
+    td {
+        padding: 16px 12px;
+        font-size: 14px;
+        color: #555;
+        vertical-align: middle;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .status-pending {
+        background-color: #FFF3E0;
+        color: #EF6C00;
+    }
+    
+    .status-resolved {
+        background-color: #E8F5E9;
+        color: var(--primary-green);
+    }
+    
+    .btn-reply {
+        background-color: var(--accent-blue);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        text-align: center;
+        min-width: 100px;
+    }
+    
+    .btn-reply:hover {
+        background-color: #1976D2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+        text-decoration: none;
+        color: white;
+    }
+    
+    .complaint-text {
+        max-width: 300px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: help;
+    }
+    
+    .complaint-text:hover {
+        white-space: normal;
+        overflow: visible;
+        position: relative;
+        z-index: 10;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 10px;
+        border-radius: 4px;
+        max-width: 400px;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        background-color: var(--light-green);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 14px;
+    }
+    
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+    
+    .no-data i {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    .table-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #eee;
+    }
+    
+    .summary {
+        font-size: 14px;
+        color: #666;
+    }
+    
+    .pagination {
+        display: flex;
+        gap: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 10px;
+        }
+        
+        .header {
+            padding: 15px;
+        }
+        
+        .header h1 {
+            font-size: 20px;
+        }
+        
+        .table-container {
+            padding: 10px;
+        }
+        
+        th, td {
+            padding: 12px 8px;
+            font-size: 13px;
+        }
+        
+        .table-footer {
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Complaints Management - Waste Control System</h1>
+    </div>
+    
+    <div class="card">
+        <div class="table-container">
+            {% if data %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>SI No</th>
+                        <th>Complaint Details</th>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Status/Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr>
+                        <td><strong>{{ forloop.counter }}</strong></td>
+                        <td>
+                            <div class="complaint-text" title="{{ i.complaint }}">
+                                {{ i.complaint }}
+                            </div>
+                        </td>
+                        <td>{{ i.complaintdate }}</td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    {{ i.USER.name|first|upper }}
+                                </div>
+                                <span>{{ i.USER.name }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if i.reply == 'pending' %}
+                            <a href="reply/{{ i.id }}" class="btn-reply">
+                                ⮚ Send Reply
+                            </a>
+                            {% else %}
+                            <div class="status-resolved status-badge">
+                                ✓ Replied
+                            </div>
+                            <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                                <em>See reply in details</em>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-data">
+                <div style="font-size: 48px; margin-bottom: 15px;">📭</div>
+                <h3>No Complaints Found</h3>
+                <p>There are currently no complaints to display.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        {% if data %}
+        <div class="table-footer">
+            <div class="summary">
+                Showing <strong>{{ data|length }}</strong> complaint{{ data|length|pluralize }}
+            </div>
+            <div class="pagination">
+                <!-- Add pagination controls here if needed -->
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Add tooltip functionality for long complaint text
+    document.addEventListener('DOMContentLoaded', function() {
+        const complaintCells = document.querySelectorAll('.complaint-text');
+        
+        complaintCells.forEach(cell => {
+            const text = cell.getAttribute('title');
+            if (text && text.length > 100) {
+                cell.style.cursor = 'help';
+            } else {
+                cell.removeAttribute('title');
+                cell.style.cursor = 'default';
+            }
+        });
+        
+        // Add animation to status badges
+        const badges = document.querySelectorAll('.status-badge');
+        badges.forEach(badge => {
+            badge.style.opacity = '0';
+            badge.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                badge.style.transition = 'all 0.5s ease';
+                badge.style.opacity = '1';
+                badge.style.transform = 'translateY(0)';
+            }, 300);
+        });
+    });
+</script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,440 @@
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Add New Waste Type - Waste Management</title>
+<style>
+    /* Main Container */
+    .waste-form-container {
+        max-width: 800px;
+        margin: 40px auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+    
+    /* Header */
+    .form-header {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        padding: 25px 30px;
+        text-align: center;
+    }
+    
+    .form-header h1 {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    .header-icon {
+        font-size: 28px;
+    }
+    
+    .form-subtitle {
+        margin-top: 8px;
+        opacity: 0.9;
+        font-size: 14px;
+    }
+    
+    /* Form Content */
+    .form-content {
+        padding: 35px 40px;
+    }
+    
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+    
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .form-content {
+            padding: 25px 20px;
+        }
+    }
+    
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 22px;
+    }
+    
+    .full-width {
+        grid-column: 1 / -1;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #2c3e50;
+        font-weight: 600;
+        font-size: 15px;
+        letter-spacing: 0.3px;
+    }
+    
+    .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .field-icon {
+        color: #27ae60;
+        font-size: 16px;
+    }
+    
+    /* Input Fields */
+    .form-input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e8f5e9;
+        border-radius: 8px;
+        font-size: 15px;
+        color: #2c3e50;
+        background-color: #f9fdfa;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #2ecc71;
+        background-color: white;
+        box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.15);
+    }
+    
+    .form-input.valid {
+        border-color: #27ae60;
+        background-color: #f0f9f4;
+    }
+    
+    .form-input.error {
+        border-color: #e74c3c;
+        background-color: #fef7f6;
+    }
+    
+    /* Input Hints and Errors */
+    .input-hint {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 5px;
+        display: block;
+        line-height: 1.4;
+    }
+    
+    .error-message {
+        font-size: 12px;
+        color: #e74c3c;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    /* Submit Button */
+    .submit-section {
+        text-align: center;
+        margin-top: 35px;
+        padding-top: 25px;
+        border-top: 1px solid #ecf0f1;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        border: none;
+        padding: 16px 45px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        letter-spacing: 0.5px;
+        min-width: 200px;
+        justify-content: center;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+    
+    .submit-btn:disabled {
+        background: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .btn-icon {
+        font-size: 18px;
+    }
+    
+    /* Required Indicator */
+    .required {
+        color: #e74c3c;
+        margin-left: 4px;
+    }
+    
+    /* Success Message */
+    .success-message {
+        background: #d5f4e6;
+        border: 1px solid #27ae60;
+        border-radius: 6px;
+        padding: 12px 20px;
+        margin-bottom: 25px;
+        display: none;
+        align-items: center;
+        gap: 10px;
+        color: #27ae60;
+        font-weight: 500;
+    }
+</style>
+</head>
+
+<body>
+<div class="waste-form-container">
+    <!-- Form Header -->
+    <div class="form-header">
+        <h1>
+            <span class="header-icon">♻️</span>
+            Add New Waste Type
+        </h1>
+        <div class="form-subtitle">Register new waste category for management system</div>
+    </div>
+    
+    <!-- Form Content -->
+    <div class="form-content">
+        <div class="success-message" id="successMessage">
+            <span>✓</span> Waste type added successfully!
+        </div>
+        
+        <form id="form1" name="form1" method="post" action="/add_waste_type_post">
+            <div class="form-grid">
+                <!-- Waste Type Field -->
+                <div class="form-group">
+                    <label class="form-label" for="waste">
+                        <span class="label-with-icon">
+                            <span class="field-icon">🗑️</span>
+                            Waste Type
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text" 
+                           name="textfield" 
+                           id="waste" 
+                           class="form-input"
+                           placeholder="e.g., Plastic, Paper, Glass"
+                           pattern="[A-Za-z\s]{2,50}"
+                           title="Waste type name (2-50 letters only)"
+                           required />
+                    <span class="input-hint">Enter the type of waste material</span>
+                    <span class="error-message" id="wasteError">Please enter a valid waste type (2-50 letters)</span>
+                </div>
+                
+                <!-- Amount Field -->
+                <div class="form-group">
+                    <label class="form-label" for="amount">
+                        <span class="label-with-icon">
+                            <span class="field-icon">⚖️</span>
+                            Amount
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text" 
+                           name="textfield2" 
+                           id="amount" 
+                           class="form-input"
+                           placeholder="e.g., 10.5"
+                           pattern="^\d+(\.\d{1,2})?$"
+                           title="Enter a valid amount (numbers with optional decimal)"
+                           required />
+                    <span class="input-hint">Amount in kilograms or units</span>
+                    <span class="error-message" id="amountError">Please enter a valid amount (e.g., 10 or 10.5)</span>
+                </div>
+                
+                <!-- Reward Field -->
+                <div class="form-group">
+                    <label class="form-label" for="reward">
+                        <span class="label-with-icon">
+                            <span class="field-icon">💰</span>
+                            Reward Points
+                            <span class="required">*</span>
+                        </span>
+                    </label>
+                    <input type="text" 
+                           name="textfield4" 
+                           id="reward" 
+                           class="form-input"
+                           placeholder="e.g., 50"
+                           pattern="^\d+$"
+                           title="Enter whole number reward points"
+                           required />
+                    <span class="input-hint">Points awarded per unit of waste</span>
+                    <span class="error-message" id="rewardError">Please enter a whole number (no decimals)</span>
+                </div>
+                
+                <!-- Description Field (Full Width) -->
+                <div class="form-group full-width">
+                    <label class="form-label" for="description">
+                        <span class="label-with-icon">
+                            <span class="field-icon">📝</span>
+                            Description
+                        </span>
+                    </label>
+                    <input type="text" 
+                           name="textfield3" 
+                           id="description" 
+                           class="form-input"
+                           placeholder="Optional: Brief description of the waste type"
+                           maxlength="200" />
+                    <span class="input-hint">Maximum 200 characters (optional)</span>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="submit-section">
+                <button type="submit" name="button" id="button" class="submit-btn">
+                    <span class="btn-icon">✓</span>
+                    Add Waste Type
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form1');
+        const inputs = document.querySelectorAll('.form-input');
+        const submitBtn = document.getElementById('button');
+        
+        // Real-time validation
+        inputs.forEach(input => {
+            input.addEventListener('input', validateField);
+            input.addEventListener('blur', validateField);
+            
+            // Initial validation state
+            validateField({ target: input });
+        });
+        
+        // Field validation function
+        function validateField(e) {
+            const input = e.target;
+            const errorElement = document.getElementById(input.id + 'Error');
+            
+            if (input.hasAttribute('required') && !input.value.trim()) {
+                input.classList.add('error');
+                input.classList.remove('valid');
+                if (errorElement) errorElement.style.display = 'block';
+                return false;
+            }
+            
+            if (input.value.trim() === '') {
+                input.classList.remove('error', 'valid');
+                if (errorElement) errorElement.style.display = 'none';
+                return true;
+            }
+            
+            if (input.checkValidity()) {
+                input.classList.remove('error');
+                input.classList.add('valid');
+                if (errorElement) errorElement.style.display = 'none';
+                return true;
+            } else {
+                input.classList.remove('valid');
+                input.classList.add('error');
+                if (errorElement) errorElement.style.display = 'block';
+                return false;
+            }
+        }
+        
+        // Form submission validation
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            const requiredInputs = form.querySelectorAll('[required]');
+            
+            // Reset all errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Validate all required fields
+            requiredInputs.forEach(input => {
+                const event = new Event('blur');
+                input.dispatchEvent(event);
+                
+                if (input.classList.contains('error')) {
+                    isValid = false;
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                
+                // Show first error field
+                const firstError = form.querySelector('.error');
+                if (firstError) {
+                    firstError.focus();
+                    const errorElement = document.getElementById(firstError.id + 'Error');
+                    if (errorElement) {
+                        errorElement.style.display = 'block';
+                    }
+                }
+                
+                // Visual feedback
+                submitBtn.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    submitBtn.style.animation = '';
+                }, 500);
+            }
+        });
+        
+        // Add shake animation for invalid form
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Auto-format amount field
+        const amountInput = document.getElementById('amount');
+        if (amountInput) {
+            amountInput.addEventListener('blur', function() {
+                let value = this.value.trim();
+                if (value && /^\d+(\.\d+)?$/.test(value)) {
+                    let num = parseFloat(value);
+                    if (!isNaN(num)) {
+                        this.value = num.toFixed(2);
+                    }
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
+{% endblock %}

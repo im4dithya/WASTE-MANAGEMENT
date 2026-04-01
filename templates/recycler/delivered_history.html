@@ -1,0 +1,441 @@
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivered Orders History - Waste Management</title>
+    <style>
+        .orders-container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .page-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #27ae60;
+        }
+        
+        .page-header h2 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-header h2:before {
+            content: "📋";
+            font-size: 24px;
+        }
+        
+        .page-header p {
+            color: #7f8c8d;
+            margin: 0;
+            font-size: 15px;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #27ae60;
+        }
+        
+        .summary-card h3 {
+            margin: 0 0 10px 0;
+            color: #34495e;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .summary-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .orders-table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .table-title {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .table-title:before {
+            content: "📦";
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .search-box {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #27ae60;
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        thead {
+            background: #27ae60;
+            color: white;
+        }
+        
+        th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th:last-child {
+            border-right: none;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        td {
+            padding: 16px 12px;
+            color: #34495e;
+            vertical-align: middle;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #27ae60;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .amount {
+            font-weight: 600;
+            color: #27ae60;
+        }
+        
+        .date {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        
+        .view-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .view-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3);
+        }
+        
+        .back-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 30px;
+            padding: 12px 24px;
+            background: #f8f9fa;
+            color: #34495e;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+        }
+        
+        .back-home-btn:hover {
+            background: #e9ecef;
+            transform: translateX(-3px);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            gap: 5px;
+        }
+        
+        .page-number {
+            padding: 8px 14px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #34495e;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .page-number:hover,
+        .page-number.active {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 15px;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                min-width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="orders-container">
+        <div class="page-header">
+            <h2>Delivered Orders History</h2>
+            <p>Track all completed waste collection and recycling orders</p>
+        </div>
+        
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Total Orders</h3>
+                <div class="value">{{ data|length }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Amount</h3>
+                <div class="value">₹{{ total_amount|default:"0.00" }}</div>
+            </div>
+            <div class="summary-card">
+                <h3>This Month</h3>
+                <div class="value">{{ this_month_count|default:"0" }}</div>
+            </div>
+        </div>
+        
+        <div class="orders-table-container">
+            <div class="table-header">
+                <div class="table-title">Order History</div>
+                <div class="table-actions">
+                    <input type="text" class="search-box" placeholder="Search orders..." id="searchInput">
+                </div>
+            </div>
+            
+            {% if data %}
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>User</th>
+                        <th>Recycler</th>
+                        <th>Payment Mode</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">{{ i.USER.name|first|upper }}</div>
+                                <span>{{ i.USER.name }}</span>
+                            </div>
+                        </td>
+                        <td>{{ i.RECYCLER.name }}</td>
+                        <td>
+                            {% if i.paymentmode == 'Online' %}
+                                <span style="color: #27ae60; font-weight: 600;">💳 {{ i.paymentmode }}</span>
+                            {% else %}
+                                <span style="color: #e67e22; font-weight: 600;">💵 {{ i.paymentmode }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="amount">₹{{ i.amount }}</td>
+                        <td class="date">{{ i.date }}</td>
+                        <td>
+                            <span class="status-badge status-delivered">{{ i.status }}</span>
+                        </td>
+                        <td>
+                            <a href="/view_ordered_items/{{ i.id }}" class="view-btn">
+                                👁️ View Items
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <h3>No Orders Found</h3>
+                <p>There are no delivered orders in your history yet.</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <a href="/recycler_home" class="back-home-btn">
+            ← Back to Home
+        </a>
+    </div>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#ordersTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        // Add zebra striping to table rows
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('#ordersTable tbody tr');
+            rows.forEach((row, index) => {
+                if (index % 2 === 0) {
+                    row.style.backgroundColor = '#fafafa';
+                }
+            });
+        });
+        
+        // Calculate total amount if not provided by backend
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountElements = document.querySelectorAll('.amount');
+            let total = 0;
+            
+            amountElements.forEach(el => {
+                const amountText = el.textContent.replace('₹', '').trim();
+                const amount = parseFloat(amountText) || 0;
+                total += amount;
+            });
+            
+            // Update total amount display if needed
+            const totalAmountElement = document.querySelector('.summary-card:nth-child(2) .value');
+            if (totalAmountElement && totalAmountElement.textContent.includes('0.00')) {
+                totalAmountElement.textContent = '₹' + total.toFixed(2);
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,733 @@
+{% extends 'PICKUP_/pickuphome.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Profile - Pickup Personnel</title>
+<style>
+    /* Reset & Base Styles */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #2c3e50;
+    }
+    
+    /* Main Container */
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Header Card */
+    .profile-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 40px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .profile-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        object-fit: cover;
+        margin-bottom: 20px;
+        background: white;
+        padding: 5px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+    
+    .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    /* Profile Content */
+    .profile-content {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+    
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .info-section {
+        background: #f8fafc;
+        border-radius: 15px;
+        padding: 25px;
+        border: 2px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+    
+    .info-section:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+    }
+    
+    .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e8f0fe;
+    }
+    
+    .section-icon {
+        color: #667eea;
+        font-size: 20px;
+    }
+    
+    /* Info Items */
+    .info-item {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px dashed #e8f0fe;
+    }
+    
+    .info-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-size: 13px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .label-icon {
+        color: #667eea;
+        font-size: 14px;
+    }
+    
+    .info-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        padding: 12px 15px;
+        background: white;
+        border-radius: 10px;
+        border: 2px solid #e8f0fe;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+    
+    .info-value:hover {
+        border-color: #667eea;
+        background: #f8f9ff;
+    }
+    
+    /* Document Section */
+    .documents-section {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        border-radius: 15px;
+        padding: 30px;
+        border: 2px solid #e8f0fe;
+        margin-top: 30px;
+    }
+    
+    .documents-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+        margin-top: 20px;
+    }
+    
+    .document-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 2px solid #e8f0fe;
+    }
+    
+    .document-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    .document-preview {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-bottom: 2px solid #e8f0fe;
+    }
+    
+    .document-info {
+        padding: 20px;
+    }
+    
+    .document-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .document-icon {
+        color: #667eea;
+        font-size: 18px;
+    }
+    
+    .document-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .view-btn {
+        flex: 1;
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    
+    .view-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Status Badge */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.25);
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 16px 35px;
+        border: none;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        letter-spacing: 0.3px;
+        min-width: 180px;
+        justify-content: center;
+    }
+    
+    .btn-edit {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .btn-edit:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.35);
+    }
+    
+    .btn-back {
+        background: #f8f9fa;
+        color: #5d6d7e;
+        border: 2px solid #e9ecef;
+    }
+    
+    .btn-back:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        border-color: #dee2e6;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .profile-avatar {
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .profile-header {
+            padding: 30px 25px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .profile-content {
+            padding: 30px 25px;
+            border-radius: 0 0 15px 15px;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .documents-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .header-title {
+            font-size: 26px;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .action-btn {
+            min-width: auto;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .profile-header {
+            padding: 25px 20px;
+        }
+        
+        .profile-content {
+            padding: 25px 20px;
+        }
+        
+        .header-title {
+            font-size: 22px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+        }
+        
+        .info-value {
+            font-size: 15px;
+            padding: 10px 12px;
+        }
+    }
+    
+    /* Loading State */
+    .loading-placeholder {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        border-radius: 8px;
+        min-height: 20px;
+    }
+    
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    
+    /* Verification Badge */
+    .verification-badge {
+        position: absolute;
+        top: 40px;
+        right: 40px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.3);
+        z-index: 3;
+    }
+    
+    @media (max-width: 768px) {
+        .verification-badge {
+            position: static;
+            margin-top: 15px;
+            justify-content: center;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <!-- Verification Badge -->
+        <div class="verification-badge">
+            <span>✓</span>
+            Verified Pickup Personnel
+        </div>
+        
+        <div class="header-content">
+            <!-- Profile Photo -->
+            <img src="{{ data.photo }}" alt="Profile Photo" class="profile-avatar" 
+                 onerror="this.src='https://via.placeholder.com/120/667eea/ffffff?text=👤'">
+            
+            <h1 class="header-title">{{ data.name|default:"Pickup Personnel" }}</h1>
+            <p class="header-subtitle">Waste Collection Service Provider</p>
+        </div>
+    </div>
+    
+    <!-- Profile Content -->
+    <div class="profile-content">
+        <form id="form1" name="form1" method="post" action="" enctype="multipart/form-data">
+            <!-- Personal Information -->
+            <div class="info-grid">
+                <!-- Basic Information -->
+                <div class="info-section">
+                    <h2 class="section-title">
+                        <span class="section-icon">👤</span>
+                        Personal Information
+                    </h2>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">📝</span>
+                            Full Name
+                        </div>
+                        <div class="info-value" id="nameDisplay">
+                            {{ data.name|default:"Not provided" }}
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">📧</span>
+                            Email Address
+                        </div>
+                        <div class="info-value" id="emailDisplay">
+                            {{ data.email|default:"Not provided" }}
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">📱</span>
+                            Phone Number
+                        </div>
+                        <div class="info-value" id="phoneDisplay">
+                            {{ data.phone|default:"Not provided" }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Account Status -->
+                <div class="info-section">
+                    <h2 class="section-title">
+                        <span class="section-icon">📊</span>
+                        Account Status
+                    </h2>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">🏷️</span>
+                            Account Type
+                        </div>
+                        <div class="info-value">
+                            <span class="status-badge">
+                                <span>🔄</span>
+                                Active Pickup Personnel
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">✅</span>
+                            Verification Status
+                        </div>
+                        <div class="info-value">
+                            <span class="status-badge">
+                                <span>✓</span>
+                                Documents Verified
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-label">
+                            <span class="label-icon">📅</span>
+                            Member Since
+                        </div>
+                        <div class="info-value">
+                            {{ data.registration_date|default:"N/A" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Documents Section -->
+            <div class="documents-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📋</span>
+                    Verification Documents
+                </h2>
+                <p style="color: #5d6d7e; margin-bottom: 20px; font-size: 14.5px;">
+                    These documents are used for verification and identification purposes.
+                </p>
+                
+                <div class="documents-grid">
+                    <!-- Profile Photo Card -->
+                    <div class="document-card">
+                        <img src="{{ data.photo }}" 
+                             alt="Profile Photo" 
+                             class="document-preview"
+                             onerror="this.src='https://via.placeholder.com/300/667eea/ffffff?text=👤+Photo'">
+                        <div class="document-info">
+                            <div class="document-title">
+                                <span class="document-icon">📷</span>
+                                Profile Photo
+                            </div>
+                            <div class="document-actions">
+                                <a href="{{ data.photo }}" 
+                                   target="_blank" 
+                                   class="view-btn"
+                                   onclick="return !this.href.includes('placeholder')">
+                                    <span>👁️</span>
+                                    View Full Size
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Proof Document Card -->
+                    <div class="document-card">
+                        <img src="{{ data.proof }}" 
+                             alt="Verification Proof" 
+                             class="document-preview"
+                             onerror="this.src='https://via.placeholder.com/300/764ba2/ffffff?text=📄+Document'">
+                        <div class="document-info">
+                            <div class="document-title">
+                                <span class="document-icon">📄</span>
+                                Verification Document
+                            </div>
+                            <div class="document-actions">
+                                <a href="{{ data.proof }}" 
+                                   target="_blank" 
+                                   class="view-btn"
+                                   onclick="return !this.href.includes('placeholder')">
+                                    <span>👁️</span>
+                                    View Full Size
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+{#            <div class="action-buttons">#}
+{#                <button type="button" class="action-btn btn-edit" onclick="window.location.href='/edit_profile'">#}
+{#                    <span>✏️</span>#}
+{#                    Edit Profile#}
+{#                </button>#}
+{#                <a href="/pickup_home" class="action-btn btn-back">#}
+{#                    <span>←</span>#}
+{#                    Back to Dashboard#}
+{#                </a>#}
+{#            </div>#}
+        </form>
+    </div>
+</div>
+
+{#<script>#}
+{#    document.addEventListener('DOMContentLoaded', function() {#}
+{#        // Format phone number if present#}
+{#        const phoneElement = document.getElementById('phoneDisplay');#}
+{#        if (phoneElement) {#}
+{#            const phone = phoneElement.textContent.trim();#}
+{#            if (phone && phone !== 'Not provided') {#}
+{#                // Simple formatting for Indian numbers#}
+{#                if (phone.length === 10) {#}
+{#                    phoneElement.textContent = `+91 ${phone.substring(0,5)} ${phone.substring(5)}`;#}
+{#                } else if (phone.length === 12 && phone.startsWith('91')) {#}
+{#                    phoneElement.textContent = `+${phone.substring(0,2)} ${phone.substring(2,7)} ${phone.substring(7)}`;#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#        #}
+{#        // Add hover effects to profile photo#}
+{#        const profileAvatar = document.querySelector('.profile-avatar');#}
+{#        if (profileAvatar) {#}
+{#            profileAvatar.addEventListener('mouseenter', function() {#}
+{#                this.style.transform = 'scale(1.05)';#}
+{#                this.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.3)';#}
+{#            });#}
+{#            #}
+{#            profileAvatar.addEventListener('mouseleave', function() {#}
+{#                this.style.transform = 'scale(1)';#}
+{#                this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';#}
+{#            });#}
+{#        }#}
+{#        #}
+{#        // Add copy functionality to info values#}
+{#        const infoValues = document.querySelectorAll('.info-value');#}
+{#        infoValues.forEach(value => {#}
+{#            value.style.cursor = 'pointer';#}
+{#            value.title = 'Click to copy';#}
+{#            #}
+{#            value.addEventListener('click', function() {#}
+{#                const text = this.textContent.trim();#}
+{#                if (text && text !== 'Not provided') {#}
+{#                    navigator.clipboard.writeText(text).then(() => {#}
+{#                        const originalText = this.textContent;#}
+{#                        this.textContent = '✓ Copied!';#}
+{#                        this.style.color = '#27ae60';#}
+{#                        this.style.borderColor = '#27ae60';#}
+{#                        #}
+{#                        setTimeout(() => {#}
+{#                            this.textContent = originalText;#}
+{#                            this.style.color = '';#}
+{#                            this.style.borderColor = '';#}
+{#                        }, 2000);#}
+{#                    });#}
+{#                }#}
+{#            });#}
+{#        });#}
+{#        #}
+{#        // Handle image loading errors#}
+{#        const images = document.querySelectorAll('img');#}
+{#        images.forEach(img => {#}
+{#            img.addEventListener('error', function() {#}
+{#                if (this.classList.contains('profile-avatar')) {#}
+{#                    this.src = 'https://via.placeholder.com/120/667eea/ffffff?text=👤';#}
+{#                } else if (this.classList.contains('document-preview')) {#}
+{#                    if (this.alt.includes('Profile')) {#}
+{#                        this.src = 'https://via.placeholder.com/300/667eea/ffffff?text=👤+Photo';#}
+{#                    } else {#}
+{#                        this.src = 'https://via.placeholder.com/300/764ba2/ffffff?text=📄+Document';#}
+{#                    }#}
+{#                }#}
+{#            });#}
+{#        });#}
+{#        #}
+{#        // Add loading animation for images#}
+{#        images.forEach(img => {#}
+{#            if (!img.complete) {#}
+{#                img.classList.add('loading-placeholder');#}
+{#                img.addEventListener('load', function() {#}
+{#                    this.classList.remove('loading-placeholder');#}
+{#                });#}
+{#            }#}
+{#        });#}
+{#    });#}
+{#</script>#}
+</body>
+</html>
+{% endblock %}

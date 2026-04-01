@@ -1,0 +1,366 @@
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Product Management - Waste Management System</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f7f0;
+    }
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+    .header {
+        background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        color: white;
+        padding: 25px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .header-icon {
+        font-size: 28px;
+    }
+    .header-actions {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    .btn-add {
+        background: white;
+        color: #2e7d32;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    .btn-add:hover {
+        background: #f5fff5;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+    .product-count {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+    }
+
+    /* Table Styling */
+    .table-container {
+        padding: 30px;
+        overflow-x: auto;
+    }
+    .products-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    .products-table thead {
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    }
+    .products-table th {
+        padding: 18px 20px;
+        text-align: left;
+        font-weight: 600;
+        color: #2e7d32;
+        border-bottom: 2px solid #4caf50;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .products-table td {
+        padding: 20px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #444;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+    .products-table tr:hover {
+        background-color: #f8fff8;
+    }
+    .products-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Specific Column Styles */
+    .serial-no {
+        font-weight: 600;
+        color: #4caf50;
+        text-align: center;
+        width: 70px;
+    }
+    .product-name {
+        font-weight: 600;
+        color: #2c3e50;
+        min-width: 200px;
+    }
+    .product-photo {
+        text-align: center;
+        width: 120px;
+    }
+    .product-photo img {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        transition: transform 0.3s ease;
+        object-fit: cover;
+    }
+    .product-photo img:hover {
+        transform: scale(1.05);
+        border-color: #4caf50;
+    }
+    .price-cell {
+        font-weight: 700;
+        color: #2e7d32;
+        font-size: 16px;
+        text-align: center;
+    }
+    .quantity-cell {
+        text-align: center;
+    }
+    .quantity-badge {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 6px 15px;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        min-width: 50px;
+    }
+    .actions-cell {
+        text-align: center;
+        min-width: 150px;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+    .btn-edit {
+        background: #2196f3;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        min-width: 80px;
+        justify-content: center;
+    }
+    .btn-delete {
+        background: #f44336;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+        min-width: 80px;
+        justify-content: center;
+    }
+    .btn-edit:hover {
+        background: #1976d2;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+    }
+    .btn-delete:hover {
+        background: #d32f2f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+    .empty-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    .empty-state p {
+        font-size: 16px;
+        margin: 10px 0;
+    }
+    .btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        color: white;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+    }
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(46, 125, 50, 0.3);
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-size: 13px;
+        border-top: 1px solid #eee;
+        background: #f9f9f9;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+        .header h1 {
+            justify-content: center;
+        }
+        .header-actions {
+            justify-content: center;
+        }
+        .table-container {
+            padding: 15px;
+        }
+        .products-table {
+            font-size: 13px;
+        }
+        .products-table th,
+        .products-table td {
+            padding: 12px 8px;
+        }
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        .btn-edit, .btn-delete {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <span class="header-icon">📦</span>
+            Product Management - Waste Recycling
+        </h1>
+        <div class="header-actions">
+            <a href="/add_product" class="btn-add">
+                <span>➕</span> Add New Product
+            </a>
+            <div class="product-count">
+                {{ data|length }} Products
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="table-container">
+        {% if data %}
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th class="serial-no">Si No</th>
+                        <th class="product-name">Name</th>
+                        <th class="product-photo">Photo</th>
+                        <th class="price-cell">Price</th>
+                        <th class="quantity-cell">Quantity</th>
+                        <th class="actions-cell">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in data %}
+                    <tr>
+                        <td class="serial-no">{{ forloop.counter }}</td>
+                        <td class="product-name">{{ i.name }}</td>
+                        <td class="product-photo">
+                            <img src="{{ i.photo }}" alt="{{ i.name }}" height="100" width="100"/>
+                        </td>
+                        <td class="price-cell">₹{{ i.price }}</td>
+                        <td class="quantity-cell">
+                            <span class="quantity-badge">{{ i.qty }}</span>
+                        </td>
+                        <td class="actions-cell">
+                            <div class="action-buttons">
+                                <a href="/edit_product/{{ i.id }}" class="btn-edit">
+                                    <span>✏️</span> Edit
+                                </a>
+                                <a href="/delete_product/{{ i.id }}" class="btn-delete" 
+                                   onclick="return confirm('Are you sure you want to delete {{ i.name }}?')">
+                                    <span>🗑️</span> Delete
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <p>No products found in the system.</p>
+                <p>Start by adding your first product to manage waste recycling items.</p>
+                <a href="/add_product" class="btn-create">
+                    <span>➕</span> Add Your First Product
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>Waste Management System • Product Inventory • Total: {{ data|length }} items</p>
+    </div>
+</div>
+</body>
+</html>
+{% endblock %}

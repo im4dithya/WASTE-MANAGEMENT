@@ -1,0 +1,1147 @@
+{% extends 'PICKUP_/pickuphome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Today's Collection - Waste Management</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Reset & Base Styles */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+{#        padding: 20px;#}
+        color: #2c3e50;
+    }
+    
+    /* Main Container */
+    .today-container {
+        max-width: 1300px;
+        margin: 0 auto;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Dashboard Header */
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 35px 40px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .dashboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .header-text {
+        flex: 1;
+    }
+    
+    .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    
+    .header-icon {
+        font-size: 42px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 400;
+        max-width: 600px;
+    }
+    
+    .date-badge {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 15px 25px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 250px;
+    }
+    
+    .date-icon {
+        font-size: 24px;
+        color: #ffeaa7;
+    }
+    
+    .date-text {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .date-label {
+        font-size: 12px;
+        opacity: 0.8;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .date-value {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 2px;
+    }
+    
+    /* Stats Dashboard */
+    .stats-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 40px;
+        background: white;
+        border-bottom: 1px solid #e8f0fe;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stat-content {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    .stat-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .stat-card:nth-child(2) .stat-icon {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stat-card:nth-child(3) .stat-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stat-text {
+        flex: 1;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    
+    .stat-value {
+        font-size: 40px;
+        font-weight: 800;
+        color: #2c3e50;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+    
+    .stat-description {
+        font-size: 13px;
+        color: #7f8c8d;
+        margin-top: 8px;
+    }
+    
+    /* Collections Section */
+    .collections-section {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        padding: 40px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .section-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .section-icon {
+        color: #667eea;
+        font-size: 28px;
+    }
+    
+    .refresh-btn {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.25);
+    }
+    
+    .refresh-btn:hover {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(46, 204, 113, 0.35);
+    }
+    
+    /* Collections Table */
+    .collections-table-container {
+        overflow-x: auto;
+        border-radius: 15px;
+        border: 2px solid #e8f0fe;
+        margin-top: 20px;
+    }
+    
+    .collections-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        min-width: 1000px;
+    }
+    
+    .collections-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .collections-table th {
+        padding: 22px 25px;
+        text-align: left;
+        font-weight: 600;
+        color: white;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+    
+    .collections-table th:first-child {
+        border-radius: 13px 0 0 0;
+    }
+    
+    .collections-table th:last-child {
+        border-radius: 0 13px 0 0;
+    }
+    
+    .collections-table tbody tr {
+        border-bottom: 1px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+    
+    .collections-table tbody tr:hover {
+        background: #f8f9ff;
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .collections-table tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+    
+    .collections-table tbody tr:nth-child(even):hover {
+        background: #f0f4ff;
+    }
+    
+    .collections-table td {
+        padding: 20px 25px;
+        font-size: 14.5px;
+        color: #2c3e50;
+        border: none;
+        vertical-align: middle;
+    }
+    
+    /* User Info */
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .user-avatar {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    
+    .user-details {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .user-name {
+        font-weight: 700;
+        color: #2c3e50;
+        font-size: 15px;
+    }
+    
+    .user-id {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 2px;
+    }
+    
+    /* Area Badge */
+    .area-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1976d2;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        border: 1px solid #90caf9;
+    }
+    
+    /* Contact Info */
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .phone-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #2c3e50;
+        text-decoration: none;
+        font-size: 13.5px;
+        transition: color 0.3s ease;
+    }
+    
+    .phone-link:hover {
+        color: #667eea;
+    }
+    
+    .phone-icon {
+        color: #667eea;
+        font-size: 14px;
+    }
+    
+    /* Status Badge */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(46, 204, 113, 0.25);
+    }
+    
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .action-btn {
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 12.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        min-width: 120px;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.25);
+    }
+    
+    .action-btn:hover {
+        background: linear-gradient(135deg, #5568d3 0%, #654ba2 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+    }
+    
+    .btn-icon {
+        font-size: 14px;
+    }
+    
+    /* No Data State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        margin: 30px 0;
+    }
+    
+    .empty-icon {
+        font-size: 64px;
+        color: #ddd;
+        margin-bottom: 20px;
+        opacity: 0.5;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .empty-title {
+        font-size: 24px;
+        color: #95a5a6;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .empty-description {
+        color: #7f8c8d;
+        font-size: 16px;
+        max-width: 500px;
+        margin: 0 auto 25px;
+        line-height: 1.6;
+    }
+    
+    /* Footer Actions */
+    .footer-actions {
+        text-align: center;
+        padding: 40px 0 20px;
+    }
+    
+    .back-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 35px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .back-button:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.35);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .stats-dashboard {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .collections-table {
+            min-width: 900px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .dashboard-header {
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .date-badge {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .stats-dashboard,
+        .collections-section {
+            padding: 25px;
+        }
+        
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .refresh-btn {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .header-title {
+            font-size: 26px;
+        }
+        
+        .header-icon {
+            font-size: 32px;
+        }
+        
+        .stat-card {
+            padding: 25px;
+        }
+        
+        .stat-value {
+            font-size: 34px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .dashboard-header {
+            padding: 20px;
+        }
+        
+        .header-title {
+            font-size: 22px;
+        }
+        
+        .date-badge {
+            padding: 12px 20px;
+        }
+        
+        .date-value {
+            font-size: 18px;
+        }
+        
+        .stat-card {
+            padding: 20px;
+        }
+        
+        .stat-value {
+            font-size: 30px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 28px;
+        }
+        
+        .collections-table th,
+        .collections-table td {
+            padding: 15px;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+        }
+        
+        .action-btn {
+            min-width: 100%;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="today-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="header-title">
+                    <span class="header-icon">📅</span>
+                    Today's Collection Dashboard
+                </h1>
+                <p class="header-subtitle">
+                    Real-time overview of all waste collections scheduled and completed today in your allocated areas
+                </p>
+            </div>
+            
+            <div class="date-badge">
+                <span class="date-icon">📅</span>
+                <div class="date-text">
+                    <div class="date-label">Today's Date</div>
+                    <div class="date-value">{{ today }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Dashboard -->
+    <div class="stats-dashboard">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-label">Total Collections</div>
+                    <div class="stat-value">{{ data|length }}</div>
+                    <div class="stat-description">Scheduled for today</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-label">Unique Customers</div>
+                    <div class="stat-value">
+                        {% with unique_users=data|dictsort:"USER.id"|length %}
+                            {{ unique_users }}
+                        {% endwith %}
+                    </div>
+                    <div class="stat-description">Served today</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <div class="stat-text">
+{#                    <div class="stat-label">Areas Covered</div>#}
+{#                    <div class="stat-value">#}
+{#                        {% with areas=[] %}#}
+{#                            {% for collection in data %}#}
+{#                                {% if collection.USER.AREA.panchayath not in areas %}#}
+{#                                    {{ areas.append(collection.USER.AREA.panchayath) }}#}
+{#                                {% endif %}#}
+{#                            {% endfor %}#}
+{#                            {{ areas|length }}#}
+{#                        {% endwith %}#}
+{#                    </div>#}
+                    <div class="stat-description">Different panchayaths</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Collections Section -->
+    <div class="collections-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <span class="section-icon">🗑️</span>
+                Today's Collection Schedule
+                <span style="font-size: 14px; color: #7f8c8d; font-weight: normal; margin-left: 10px;">
+                    ({{ data|length }} collections)
+                </span>
+            </h2>
+            
+            <button class="refresh-btn" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i>
+                Refresh Data
+            </button>
+        </div>
+        
+        {% if data %}
+        <div class="collections-table-container">
+            <table class="collections-table">
+                <thead>
+                    <tr>
+                        <th width="5%">#</th>
+                        <th width="20%">Customer Details</th>
+                        <th width="15%">Location</th>
+                        <th width="15%">Panchayath</th>
+                        <th width="15%">Contact Information</th>
+                        <th width="15%">Collection Status</th>
+                        <th width="15%">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for collection in data %}
+                    <tr style="animation: slideIn {{ forloop.counter0|add:0.2 }}s ease-out;">
+                        <td>
+                            <div style="font-weight: 700; color: #667eea; font-size: 16px;">
+                                {{ forloop.counter }}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">
+                                    {{ collection.USER.name|first|upper }}
+                                </div>
+                                <div class="user-details">
+                                    <div class="user-name">{{ collection.USER.name }}</div>
+                                    <div class="user-id">ID: {{ collection.USER.id|slice:":8" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <span class="area-badge">
+                                <i class="fas fa-map-marker-alt"></i>
+                                {{ collection.USER.AREA.district }}
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <div style="font-weight: 600; color: #2c3e50; font-size: 15px;">
+                                {{ collection.USER.AREA.panchayath }}
+                            </div>
+                            <div style="font-size: 12px; color: #7f8c8d; margin-top: 3px;">
+                                {{ collection.USER.AREA.latitude|floatformat:4 }}, {{ collection.USER.AREA.longitude|floatformat:4 }}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <div class="contact-info">
+                                {% if collection.USER.phone %}
+                                <a href="tel:{{ collection.USER.phone }}" class="phone-link">
+                                    <span class="phone-icon">📱</span>
+                                    {{ collection.USER.phone }}
+                                </a>
+                                {% endif %}
+                                {% if collection.USER.email %}
+                                <div style="font-size: 12px; color: #7f8c8d; margin-top: 4px;">
+                                    <i class="fas fa-envelope"></i>
+                                    {{ collection.USER.email|truncatechars:20 }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        
+                        <td>
+                            <span class="status-badge">
+                                <i class="fas fa-check-circle"></i>
+                                {{ collection.status }}
+                            </span>
+                        </td>
+                        
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/waste_item/{{ collection.id }}" 
+                                   class="action-btn" 
+                                   title="View collected waste items">
+                                    <span class="btn-icon">🗑️</span>
+                                    View Waste Items
+                                </a>
+                                <a href="https://www.google.com/maps?q={{ collection.USER.AREA.latitude }},{{ collection.USER.AREA.longitude }}" 
+                                   target="_blank" 
+                                   class="action-btn" 
+                                   style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);"
+                                   title="Open location in Google Maps">
+                                    <span class="btn-icon">🗺️</span>
+                                    View Location
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Summary Footer -->
+        <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%); border-radius: 15px; border: 2px solid #e8f0fe;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; color: #5d6d7e; font-weight: 600;">All Collections Complete</div>
+                        <div style="font-size: 12px; color: #7f8c8d;">All scheduled collections for today have been successfully completed</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: right;">
+                    <div style="font-size: 12px; color: #5d6d7e; font-weight: 600;">Total Collections</div>
+                    <div style="font-size: 24px; font-weight: 800; color: #667eea;">{{ data|length }}</div>
+                </div>
+            </div>
+        </div>
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">📅</div>
+            <h2 class="empty-title">No Collections Scheduled for Today</h2>
+            <p class="empty-description">
+                There are no waste collections scheduled for today in your allocated areas. 
+                Check back tomorrow or view upcoming collections in the schedule.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/pickup_home" class="back-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-home"></i>
+                    Return to Dashboard
+                </a>
+{#                <a href="/view_upcoming_collections" class="back-button" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">#}
+{#                    <i class="fas fa-calendar-alt"></i>#}
+{#                    View Upcoming Collections#}
+{#                </a>#}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Footer Actions -->
+        {% if data %}
+        <div class="footer-actions">
+            <a href="/pickup_home" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{#<script>#}
+{#    document.addEventListener('DOMContentLoaded', function() {#}
+{#        // Initialize animations#}
+{#        initializeAnimations();#}
+{#        #}
+{#        // Initialize interactive elements#}
+{#        initializeInteractiveElements();#}
+{#        #}
+{#        // Initialize table row effects#}
+{#        initializeTableEffects();#}
+{#        #}
+{#        // Format data#}
+{#        formatData();#}
+{#    });#}
+{#    #}
+{#    function initializeAnimations() {#}
+{#        // Add scroll animations to table rows#}
+{#        const observerOptions = {#}
+{#            threshold: 0.1,#}
+{#            rootMargin: '0px 0px -50px 0px'#}
+{#        };#}
+{#        #}
+{#        const observer = new IntersectionObserver((entries) => {#}
+{#            entries.forEach(entry => {#}
+{#                if (entry.isIntersecting) {#}
+{#                    entry.target.style.opacity = '1';#}
+{#                    entry.target.style.transform = 'translateX(0)';#}
+{#                }#}
+{#            });#}
+{#        }, observerOptions);#}
+{#        #}
+{#        // Observe table rows#}
+{#        const tableRows = document.querySelectorAll('.collections-table tbody tr');#}
+{#        tableRows.forEach((row, index) => {#}
+{#            row.style.opacity = '0';#}
+{#            row.style.transform = 'translateX(-20px)';#}
+{#            row.style.transition = 'opacity 0.5s ease, transform 0.5s ease';#}
+{#            row.style.transitionDelay = `${index * 0.1}s`;#}
+{#            observer.observe(row);#}
+{#        });#}
+{#        #}
+{#        // Observe stat cards#}
+{#        const statCards = document.querySelectorAll('.stat-card');#}
+{#        statCards.forEach((card, index) => {#}
+{#            card.style.opacity = '0';#}
+{#            card.style.transform = 'translateY(20px)';#}
+{#            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';#}
+{#            card.style.transitionDelay = `${index * 0.2}s`;#}
+{#            observer.observe(card);#}
+{#        });#}
+{#    }#}
+{#    #}
+{#    function initializeInteractiveElements() {#}
+{#        // Refresh button functionality#}
+{#        const refreshBtn = document.getElementById('refreshBtn');#}
+{#        if (refreshBtn) {#}
+{#            refreshBtn.addEventListener('click', function() {#}
+{#                const originalHTML = this.innerHTML;#}
+{#                const originalWidth = this.offsetWidth;#}
+{#                #}
+{#                // Set fixed width to prevent button from resizing#}
+{#                this.style.width = `${originalWidth}px`;#}
+{#                this.style.minWidth = `${originalWidth}px`;#}
+{#                #}
+{#                // Show loading state#}
+{#                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';#}
+{#                this.disabled = true;#}
+{#                this.style.opacity = '0.7';#}
+{#                #}
+{#                // Simulate refresh process#}
+{#                setTimeout(() => {#}
+{#                    // Show success state#}
+{#                    this.innerHTML = '<i class="fas fa-check"></i> Data Updated';#}
+{#                    this.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';#}
+{#                    #}
+{#                    setTimeout(() => {#}
+{#                        // Reset button#}
+{#                        this.innerHTML = originalHTML;#}
+{#                        this.style.background = '';#}
+{#                        this.disabled = false;#}
+{#                        this.style.opacity = '1';#}
+{#                        this.style.width = '';#}
+{#                        this.style.minWidth = '';#}
+{#                        #}
+{#                        // Add a subtle visual feedback to the table#}
+{#                        const table = document.querySelector('.collections-table');#}
+{#                        table.style.transform = 'scale(0.99)';#}
+{#                        setTimeout(() => {#}
+{#                            table.style.transform = 'scale(1)';#}
+{#                            table.style.transition = 'transform 0.3s ease';#}
+{#                        }, 100);#}
+{#                    }, 1500);#}
+{#                }, 1000);#}
+{#            });#}
+{#        }#}
+{#        #}
+{#        // Phone link effects#}
+{#        const phoneLinks = document.querySelectorAll('.phone-link');#}
+{#        phoneLinks.forEach(link => {#}
+{#            link.addEventListener('mouseenter', function() {#}
+{#                this.style.transform = 'translateY(-2px)';#}
+{#                this.style.boxShadow = '0 4px 8px rgba(102, 126, 234, 0.2)';#}
+{#            });#}
+{#            #}
+{#            link.addEventListener('mouseleave', function() {#}
+{#                this.style.transform = 'translateY(0)';#}
+{#                this.style.boxShadow = 'none';#}
+{#            });#}
+{#        });#}
+{#        #}
+{#        // Action button effects#}
+{#        const actionButtons = document.querySelectorAll('.action-btn');#}
+{#        actionButtons.forEach(button => {#}
+{#            button.addEventListener('mouseenter', function() {#}
+{#                this.style.transform = 'translateY(-4px)';#}
+{#                this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';#}
+{#            });#}
+{#            #}
+{#            button.addEventListener('mouseleave', function() {#}
+{#                this.style.transform = 'translateY(-3px)';#}
+{#                this.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.35)';#}
+{#            });#}
+{#        });#}
+{#    }#}
+{#    #}
+{#    function initializeTableEffects() {#}
+{#        const tableRows = document.querySelectorAll('.collections-table tbody tr');#}
+{#        #}
+{#        tableRows.forEach(row => {#}
+{#            // Add hover effects#}
+{#            row.addEventListener('mouseenter', function() {#}
+{#                this.style.transform = 'translateX(8px)';#}
+{#                this.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.08)';#}
+{#                this.style.zIndex = '10';#}
+{#            });#}
+{#            #}
+{#            row.addEventListener('mouseleave', function() {#}
+{#                this.style.transform = 'translateX(5px)';#}
+{#                this.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.05)';#}
+{#                this.style.zIndex = '1';#}
+{#            });#}
+{#            #}
+{#            // Add click effect for user info#}
+{#            const userAvatar = row.querySelector('.user-avatar');#}
+{#            if (userAvatar) {#}
+{#                userAvatar.addEventListener('click', function(e) {#}
+{#                    e.stopPropagation();#}
+{#                    this.style.transform = 'scale(0.9)';#}
+{#                    setTimeout(() => {#}
+{#                        this.style.transform = '';#}
+{#                    }, 150);#}
+{#                });#}
+{#            }#}
+{#        });#}
+{#    }#}
+{#    #}
+{#    function formatData() {#}
+{#        // Format phone numbers#}
+{#        const phoneElements = document.querySelectorAll('.phone-link');#}
+{#        phoneElements.forEach(element => {#}
+{#            const phoneText = element.textContent.trim();#}
+{#            // Format Indian phone numbers (add +91 and spacing)#}
+{#            if (phoneText.length === 10 && !phoneText.includes('+')) {#}
+{#                const formatted = `+91 ${phoneText.substring(0,5)} ${phoneText.substring(5)}`;#}
+{#                element.textContent = formatted;#}
+{#            }#}
+{#        });#}
+{#        #}
+{#        // Add time indicators if available#}
+{#        const timeElements = document.querySelectorAll('.user-details');#}
+{#        timeElements.forEach(element => {#}
+{#            // Add collection time if available in data#}
+{#            const timeSpan = document.createElement('div');#}
+{#            timeSpan.className = 'user-time';#}
+{#            timeSpan.style.fontSize = '11px';#}
+{#            timeSpan.style.color = '#95a5a6';#}
+{#            timeSpan.style.marginTop = '2px';#}
+{#            timeSpan.innerHTML = '<i class="fas fa-clock"></i> Collected: Morning';#}
+{#            element.appendChild(timeSpan);#}
+{#        });#}
+{#        #}
+{#        // Add progress indicators for collections#}
+{#        if (document.querySelector('.collections-table tbody tr')) {#}
+{#            const firstRow = document.querySelector('.collections-table tbody tr');#}
+{#            if (firstRow) {#}
+{#                const progressCell = document.createElement('td');#}
+{#                progressCell.innerHTML = `#}
+{#                    <div style="display: flex; align-items: center; gap: 8px;">#}
+{#                        <div style="flex: 1; height: 6px; background: #e8f0fe; border-radius: 3px; overflow: hidden;">#}
+{#                            <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #2ecc71 0%, #27ae60 100%);"></div>#}
+{#                        </div>#}
+{#                        <span style="font-size: 11px; font-weight: 600; color: #27ae60;">100%</span>#}
+{#                    </div>#}
+{#                `;#}
+{#                // Uncomment to add progress column#}
+{#                // firstRow.insertBefore(progressCell, firstRow.children[5]);#}
+{#            }#}
+{#        }#}
+{#    }#}
+{#    #}
+{#    // Auto-refresh every 30 seconds#}
+{#    setInterval(() => {#}
+{#        const refreshBtn = document.getElementById('refreshBtn');#}
+{#        if (refreshBtn && !refreshBtn.disabled) {#}
+{#            refreshBtn.style.animation = 'pulse 1s ease-in-out';#}
+{#            setTimeout(() => {#}
+{#                refreshBtn.style.animation = '';#}
+{#            }, 1000);#}
+{#        }#}
+{#    }, 30000);#}
+{#</script>#}
+</body>
+</html>
+{% endblock %}

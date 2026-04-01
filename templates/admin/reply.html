@@ -1,0 +1,276 @@
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Send Reply - Waste Management System</title>
+<style>
+    .reply-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .page-title {
+        color: #2c3e50;
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+    
+    .page-subtitle {
+        color: #7f8c8d;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+    }
+    
+    .reply-form {
+        width: 100%;
+    }
+    
+    .form-row {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 16px;
+    }
+    
+    .form-label::after {
+        content: " *";
+        color: #e74c3c;
+    }
+    
+    .reply-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .reply-input:focus {
+        border-color: #27ae60;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    }
+    
+    .char-count {
+        text-align: right;
+        color: #95a5a6;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+    
+    .char-count.warning {
+        color: #f39c12;
+    }
+    
+    .char-count.error {
+        color: #e74c3c;
+    }
+    
+    .submit-btn {
+        background: linear-gradient(135deg, #27ae60 0%, #219653 100%);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        letter-spacing: 0.5px;
+    }
+    
+    .submit-btn:hover {
+        background: linear-gradient(135deg, #219653 0%, #1e8449 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(0);
+    }
+    
+    .submit-btn:disabled {
+        background: #95a5a6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #3498db;
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #34495e;
+    }
+    
+    .info-box strong {
+        color: #2c3e50;
+    }
+    
+    .form-footer {
+        text-align: center;
+        margin-top: 20px;
+        color: #7f8c8d;
+        font-size: 13px;
+        border-top: 1px solid #eee;
+        padding-top: 15px;
+    }
+    
+    @media (max-width: 768px) {
+        .reply-container {
+            margin: 20px;
+            padding: 20px;
+        }
+        
+        .page-title {
+            font-size: 22px;
+        }
+        
+        .reply-input {
+            min-height: 100px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .reply-container {
+            margin: 10px;
+            padding: 15px;
+        }
+        
+        .submit-btn {
+            padding: 14px 20px;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="reply-container">
+    <h1 class="page-title">Send Reply</h1>
+    <p class="page-subtitle">Waste Management System - Customer Response</p>
+    
+    <div class="info-box">
+        <strong>Note:</strong> Please provide a clear and helpful response to the customer's query. 
+        Ensure the reply addresses their concerns regarding waste management services.
+    </div>
+    
+    <form id="form1" name="form1" method="post" action="/reply_post/{{ id }}" onsubmit="return validateReply()">
+        <div class="form-row">
+            <label for="textfield" class="form-label">Your Reply</label>
+            <textarea name="textfield" id="textfield" class="reply-input" 
+                      placeholder="Type your response here... (Minimum 10 characters, Maximum 500 characters)"
+                      minlength="10"
+                      maxlength="500"
+                      pattern="[A-Za-z0-9\s.,!?'\-\n\r]+"
+                      title="Please enter a valid reply (letters, numbers, and basic punctuation)"
+                      required></textarea>
+            <div id="charCounter" class="char-count">0/500 characters</div>
+        </div>
+        
+        <div class="form-row">
+            <input type="submit" name="button" id="button" class="submit-btn" value="Send Reply" />
+        </div>
+    </form>
+    
+    <div class="form-footer">
+        This reply will be sent to the customer and recorded in the system.
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const replyInput = document.getElementById('textfield');
+        const charCounter = document.getElementById('charCounter');
+        const submitBtn = document.getElementById('button');
+        
+        // Character counter functionality
+        replyInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCounter.textContent = `${length}/500 characters`;
+            
+            // Update counter color based on length
+            if (length < 10) {
+                charCounter.className = 'char-count error';
+                submitBtn.disabled = true;
+            } else if (length > 400) {
+                charCounter.className = 'char-count warning';
+                submitBtn.disabled = false;
+            } else {
+                charCounter.className = 'char-count';
+                submitBtn.disabled = false;
+            }
+            
+            // Initialize button state
+            submitBtn.disabled = length < 10;
+        });
+        
+        // Auto-resize textarea
+        replyInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+        // Trigger input event to initialize counter
+        replyInput.dispatchEvent(new Event('input'));
+    });
+    
+    function validateReply() {
+        const replyInput = document.getElementById('textfield');
+        const reply = replyInput.value.trim();
+        
+        // Check minimum length
+        if (reply.length < 10) {
+            alert('Please enter a reply with at least 10 characters.');
+            replyInput.focus();
+            return false;
+        }
+        
+        // Check maximum length
+        if (reply.length > 500) {
+            alert('Reply cannot exceed 500 characters.');
+            replyInput.focus();
+            return false;
+        }
+        
+        // Check for valid content (basic validation)
+        const invalidPattern = /[<>\/\\]/;
+        if (invalidPattern.test(reply)) {
+            alert('Reply contains invalid characters. Please remove any HTML tags or special characters.');
+            replyInput.focus();
+            return false;
+        }
+        
+        // Confirm submission
+        return confirm('Are you sure you want to send this reply?');
+    }
+</script>
+</body>
+</html>
+{% endblock %}

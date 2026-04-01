@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoWaste Login | Waste Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f9f0;
+            background-image: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(56, 142, 60, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            background-color: #81c784;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .logo-icon i {
+            font-size: 24px;
+            color: #1b5e20;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #c8e6c9;
+        }
+
+        .features {
+            margin-top: 40px;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .feature i {
+            background-color: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .feature-text h4 {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .feature-text p {
+            color: #a5d6a7;
+            font-size: 14px;
+        }
+
+        .right-panel {
+            flex: 1;
+            background-color: white;
+            padding: 50px 40px;
+        }
+
+        .form-header {
+            margin-bottom: 40px;
+        }
+
+        .form-header h2 {
+            color: #2e7d32;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #4caf50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+
+        .input-requirements {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+            padding-left: 5px;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, #2e7d32, #4caf50);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(to right, #1b5e20, #388e3c);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 142, 60, 0.3);
+        }
+
+        .form-footer {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .form-footer a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+            transition: color 0.3s;
+        }
+
+        .form-footer a:hover {
+            color: #1b5e20;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .left-panel {
+                padding: 30px;
+            }
+
+            .right-panel {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Panel with branding and features -->
+        <div class="left-panel">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-recycle"></i>
+                </div>
+                <div class="logo-text">EcoWaste</div>
+            </div>
+            <p class="tagline">Smart Waste Management for a Cleaner Tomorrow</p>
+
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-leaf"></i>
+                    <div class="feature-text">
+                        <h4>Sustainable Solutions</h4>
+                        <p>Eco-friendly waste processing and recycling</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <div class="feature-text">
+                        <h4>Track & Analytics</h4>
+                        <p>Monitor waste collection and recycling metrics</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-users"></i>
+                    <div class="feature-text">
+                        <h4>Community Network</h4>
+                        <p>Connect with recyclers and waste management professionals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel with login form -->
+        <div class="right-panel">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p>Sign in to your EcoWaste account to manage waste collection and recycling operations.</p>
+            </div>
+
+            <form id="loginForm" name="loginForm" method="post" action="/login1_post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="email"
+                               name="username"
+                               id="username"
+                               placeholder="Enter your username"
+{#                               pattern="[A-Za-z0-9_]{5,20}"#}
+                               title="Must enter a valid name"
+                               required>
+                    </div>
+                    <div class="input-requirements">Username must be email</div>
+                    <div class="error-message" id="username-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password"
+                               name="password"
+                               id="password"
+                               placeholder="Enter your password"
+                               pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$"
+                               title="Password must be at least 8 characters with at least one letter and one number"
+                               required>
+                    </div>
+                    <div class="input-requirements">Minimum 8 characters with at least one letter and one number</div>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login to Account
+                </button>
+
+                <div class="form-footer">
+                    <a href="/forgotpassword"><i class="fas fa-key"></i> Forgot Password?</a>
+                    <a href="/recycler_register"><i class="fas fa-user-plus"></i> Create Account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

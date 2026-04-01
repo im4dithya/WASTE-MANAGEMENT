@@ -1,0 +1,618 @@
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Verified Recyclers - Waste Management System</title>
+<style>
+    .recyclers-container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .page-header {
+        margin-bottom: 30px;
+        border-bottom: 2px solid #27ae60;
+        padding-bottom: 15px;
+    }
+    
+    .page-title {
+        color: #2c3e50;
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .page-title::before {
+        content: "✅";
+        font-size: 24px;
+    }
+    
+    .page-subtitle {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .controls-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #27ae60;
+    }
+    
+    .search-filter {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .search-box {
+        position: relative;
+        min-width: 250px;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 10px 15px 10px 40px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .search-input:focus {
+        border-color: #27ae60;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.1);
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #95a5a6;
+    }
+    
+    .filter-select {
+        padding: 10px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+        color: #2c3e50;
+        min-width: 180px;
+    }
+    
+    .stats-info {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+        color: #7f8c8d;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .stat-count {
+        font-weight: 600;
+        color: #2c3e50;
+        background: #f1f8e9;
+        padding: 4px 10px;
+        border-radius: 12px;
+        min-width: 35px;
+        text-align: center;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .recyclers-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+    
+    .recyclers-table thead {
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    }
+    
+    .recyclers-table th {
+        color: white;
+        font-weight: 600;
+        padding: 16px 12px;
+        text-align: left;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .recyclers-table th:last-child {
+        border-right: none;
+    }
+    
+    .recyclers-table tbody tr {
+        border-bottom: 1px solid #eaeaea;
+        transition: all 0.3s ease;
+    }
+    
+    .recyclers-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .recyclers-table td {
+        padding: 14px 12px;
+        color: #34495e;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+    
+    .recyclers-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    
+    .recyclers-table tbody tr:nth-child(even):hover {
+        background-color: #f5f5f5;
+    }
+    
+    .serial-number {
+        color: #7f8c8d;
+        font-weight: 600;
+        text-align: center;
+    }
+    
+    .user-name {
+        color: #2c3e50;
+        font-weight: 500;
+    }
+    
+    .user-email {
+        color: #3498db;
+        word-break: break-all;
+        font-size: 13px;
+    }
+    
+    .user-phone {
+        color: #2c3e50;
+        font-family: monospace;
+        direction: ltr;
+        unicode-bidi: embed;
+    }
+    
+    .document-image {
+        border-radius: 6px;
+        border: 2px solid #e0e0e0;
+        transition: all 0.3s ease;
+        object-fit: cover;
+        background: #f8f9fa;
+    }
+    
+    .document-image:hover {
+        border-color: #27ae60;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .recycler-type {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .type-plastic {
+        background: #e8f5e9;
+        color: #27ae60;
+        border: 1px solid #c8e6c9;
+    }
+    
+    .type-metal {
+        background: #e3f2fd;
+        color: #2980b9;
+        border: 1px solid #bbdefb;
+    }
+    
+    .type-glass {
+        background: #fff3e0;
+        color: #f39c12;
+        border: 1px solid #ffe0b2;
+    }
+    
+    .type-paper {
+        background: #f3e5f5;
+        color: #8e44ad;
+        border: 1px solid #e1bee7;
+    }
+    
+    .type-ewaste {
+        background: #ffebee;
+        color: #e74c3c;
+        border: 1px solid #ffcdd2;
+    }
+    
+    .type-organic {
+        background: #f1f8e9;
+        color: #689f38;
+        border: 1px solid #dcedc8;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #95a5a6;
+        background: #fafafa;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+    
+    .export-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: flex-end;
+    }
+    
+    .export-btn {
+        padding: 8px 16px;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .export-btn:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+    
+    .export-btn::before {
+        content: "📥";
+    }
+    
+    @media (max-width: 768px) {
+        .recyclers-container {
+            margin: 15px;
+            padding: 15px;
+        }
+        
+        .page-title {
+            font-size: 22px;
+        }
+        
+        .controls-bar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-filter {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .search-box, .filter-select {
+            width: 100%;
+        }
+        
+        .stats-info {
+            justify-content: center;
+            width: 100%;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .recyclers-table th,
+        .recyclers-table td {
+            padding: 10px 8px;
+            font-size: 12px;
+        }
+        
+        .document-image {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .recycler-type {
+            font-size: 10px;
+            padding: 4px 8px;
+        }
+    }
+</style>
+</head>
+
+<body>
+<div class="recyclers-container">
+    <div class="page-header">
+        <h1 class="page-title">Verified Recyclers</h1>
+        <p class="page-subtitle">View all approved recyclers in the waste management system</p>
+    </div>
+    
+    {% if data %}
+    <div class="controls-bar">
+        <div class="search-filter">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name, email, or phone..." />
+            </div>
+            <select class="filter-select" id="typeFilter">
+                <option value="">All Types</option>
+                <option value="plastic">Plastic</option>
+                <option value="metal">Metal</option>
+                <option value="glass">Glass</option>
+                <option value="paper">Paper</option>
+                <option value="ewaste">E-Waste</option>
+                <option value="organic">Organic</option>
+            </select>
+        </div>
+        
+        <div class="stats-info">
+            <div class="stat-item">
+                <span>Total Recyclers:</span>
+                <span class="stat-count" id="totalCount">{{ data|length }}</span>
+            </div>
+            <div class="stat-item">
+                <span>Showing:</span>
+                <span class="stat-count" id="showingCount">{{ data|length }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="table-container">
+        <form id="form1" name="form1" method="post" action="">
+            <table class="recyclers-table">
+                <thead>
+                    <tr>
+                        <th>SI No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone No</th>
+                        <th>Proof Document</th>
+                        <th>Profile Photo</th>
+                        <th>Recycling Type</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    {% for i in data %}
+                    <tr data-type="{{ i.type|lower }}" data-search="{{ i.name|lower }} {{ i.email|lower }} {{ i.phone|lower }}">
+                        <td class="serial-number">{{ forloop.counter }}</td>
+                        <td class="user-name">{{ i.name }}</td>
+                        <td class="user-email">{{ i.email }}</td>
+                        <td class="user-phone">{{ i.phone }}</td>
+                        <td>
+                            <a href="{{ i.proof }}" target="_blank" title="View Full Proof Document" class="document-link">
+                                <img src="{{ i.proof }}" alt="Proof Document: {{ i.name }}" 
+                                     class="document-image" width="100" height="100"
+                                     onerror="this.src='https://via.placeholder.com/100x100?text=PROOF'" />
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ i.photo }}" target="_blank" title="View Full Profile Photo" class="document-link">
+                                <img src="{{ i.photo }}" alt="Profile Photo: {{ i.name }}" 
+                                     class="document-image" width="100" height="100"
+                                     onerror="this.src='https://via.placeholder.com/100x100?text=PHOTO'" />
+                            </a>
+                        </td>
+                        <td>
+                            {% if i.type|lower == 'plastic' %}
+                                <span class="recycler-type type-plastic">Plastic</span>
+                            {% elif i.type|lower == 'metal' %}
+                                <span class="recycler-type type-metal">Metal</span>
+                            {% elif i.type|lower == 'glass' %}
+                                <span class="recycler-type type-glass">Glass</span>
+                            {% elif i.type|lower == 'paper' %}
+                                <span class="recycler-type type-paper">Paper</span>
+                            {% elif i.type|lower == 'ewaste' or i.type|lower == 'e-waste' %}
+                                <span class="recycler-type type-ewaste">E-Waste</span>
+                            {% elif i.type|lower == 'organic' %}
+                                <span class="recycler-type type-organic">Organic</span>
+                            {% else %}
+                                <span class="recycler-type">{{ i.type|title }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+    
+    <div class="export-controls">
+        <button class="export-btn" onclick="exportToCSV()">Export to CSV</button>
+        <button class="export-btn" onclick="printTable()">Print List</button>
+    </div>
+    
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3 style="color: #95a5a6; margin-bottom: 10px;">No Verified Recyclers</h3>
+        <p style="color: #bdc3c7; max-width: 400px; margin: 0 auto;">
+            No recyclers have been verified yet. Verified recyclers will appear here once approved.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const tableRows = document.querySelectorAll('#tableBody tr');
+        const totalCount = document.getElementById('totalCount');
+        const showingCount = document.getElementById('showingCount');
+        
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedType = typeFilter.value.toLowerCase();
+            let visibleCount = 0;
+            
+            tableRows.forEach(row => {
+                const rowType = row.getAttribute('data-type');
+                const rowSearch = row.getAttribute('data-search');
+                let shouldShow = true;
+                
+                // Filter by type
+                if (selectedType && rowType !== selectedType) {
+                    shouldShow = false;
+                }
+                
+                // Filter by search term
+                if (searchTerm && !rowSearch.includes(searchTerm)) {
+                    shouldShow = false;
+                }
+                
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            showingCount.textContent = visibleCount;
+            
+            // Update serial numbers
+            let counter = 1;
+            tableRows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const serialCell = row.querySelector('.serial-number');
+                    if (serialCell) {
+                        serialCell.textContent = counter;
+                        counter++;
+                    }
+                }
+            });
+        }
+        
+        // Event listeners for filtering
+        searchInput.addEventListener('input', filterTable);
+        typeFilter.addEventListener('change', filterTable);
+        
+        // Image error handling
+        const images = document.querySelectorAll('.document-image');
+        images.forEach(img => {
+            img.addEventListener('error', function() {
+                const altText = this.alt;
+                if (altText.includes('PROOF')) {
+                    this.src = 'https://via.placeholder.com/100x100/FF9800/FFFFFF?text=PROOF+NOT+FOUND';
+                } else if (altText.includes('PHOTO')) {
+                    this.src = 'https://via.placeholder.com/100x100/2196F3/FFFFFF?text=PHOTO+NOT+FOUND';
+                }
+            });
+        });
+        
+        // Initialize
+        filterTable();
+    });
+    
+    function exportToCSV() {
+        const rows = document.querySelectorAll('#tableBody tr:not([style*="display: none"])');
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "SI No,Name,Email,Phone No,Recycling Type\n";
+        
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 6) {
+                const rowData = [
+                    cells[0].textContent.trim(),
+                    cells[1].textContent.trim(),
+                    cells[2].textContent.trim(),
+                    cells[3].textContent.trim(),
+                    cells[6].textContent.trim()
+                ];
+                csvContent += rowData.join(',') + "\n";
+            }
+        });
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "verified_recyclers.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+    
+    function printTable() {
+        const printContent = document.querySelector('.recyclers-container').innerHTML;
+        const originalContent = document.body.innerHTML;
+        
+        document.body.innerHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Verified Recyclers - Waste Management System</title>
+                <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; }
+                    .print-header { text-align: center; margin-bottom: 20px; }
+                    .print-title { color: #2c3e50; font-size: 24px; }
+                    .print-date { color: #7f8c8d; font-size: 14px; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th { background: #f0f0f0; padding: 10px; border: 1px solid #ddd; }
+                    td { padding: 8px; border: 1px solid #ddd; }
+                    .type-badge { background: #e8f5e9; padding: 3px 8px; border-radius: 10px; font-size: 12px; }
+                    @media print {
+                        .no-print { display: none; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="print-header">
+                    <h1 class="print-title">Verified Recyclers List</h1>
+                    <div class="print-date">Generated on: ${new Date().toLocaleDateString()}</div>
+                    <div class="print-date">Total Recyclers: ${document.querySelectorAll('#tableBody tr:not([style*="display: none"])').length}</div>
+                </div>
+                ${document.querySelector('.table-container').innerHTML}
+                <div class="no-print" style="margin-top: 20px; text-align: center;">
+                    <button onclick="window.print()">Print Now</button>
+                    <button onclick="window.close()">Close</button>
+                </div>
+            </body>
+            </html>
+        `;
+        
+        window.print();
+        document.body.innerHTML = originalContent;
+        window.location.reload();
+    }
+</script>
+</body>
+</html>
+{% endblock %}

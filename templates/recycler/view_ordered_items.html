@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+{% extends 'recycler/recyclerhome.html' %}
+{% block body %}
+<html>
+<head>
+    <title>Ordered Items - Waste Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .header {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px 8px 0 0;
+            margin: -30px -30px 30px -30px;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .order-id {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        th {
+            background-color: #4caf50;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            padding: 16px;
+            text-align: left;
+        }
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .serial-no {
+            font-weight: 600;
+            color: #4caf50;
+        }
+        .product-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .quantity {
+            text-align: center;
+            background: #e8f5e9;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .price {
+            font-weight: 600;
+            color: #2e7d32;
+        }
+        .actions {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .btn-back {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-back:hover {
+            background: #3d8b40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        .eco-icon {
+            font-size: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .summary {
+            background: #f8fff8;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+        .summary h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .no-items {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            .header {
+                padding: 20px 15px;
+                margin: -15px -15px 20px -15px;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+            th, td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>
+                <span class="eco-icon">♻️</span>
+                Ordered Items - Waste Management
+            </h2>
+            <div class="order-id">Order #{{ order.id }}</div>
+        </div>
+
+        <div class="summary">
+            <h3>Order Summary</h3>
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Total Items:</strong> {{ items|length }}</p>
+        </div>
+
+        {% if items %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td class="serial-no">{{ forloop.counter }}</td>
+                        <td class="product-name">{{ item.PRODUCT.name }}</td>
+                        <td>
+                            <span class="quantity">{{ item.qty }}</span>
+                        </td>
+                        <td class="price">${{ item.PRODUCT.price }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-items">
+                <p>No items found for this order.</p>
+            </div>
+        {% endif %}
+
+        <div class="actions">
+            <a href="/view_order_request" class="btn-back">
+                ← Back to Orders
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock %}

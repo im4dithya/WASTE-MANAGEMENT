@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Allocate Area - Waste Management</title>
+<!-- Add custom styles -->
+<style>
+    :root {
+        --primary-green: #2e7d32;
+        --dark-green: #1b5e20;
+        --light-green: #e8f5e9;
+        --accent-green: #81c784;
+        --border-color: #ddd;
+        --text-color: #333;
+        --error-color: #dc3545;
+        --success-color: #28a745;
+    }
+
+    .allocate-container {
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .allocate-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+        overflow: hidden;
+        border: 1px solid var(--light-green);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .allocate-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(46, 125, 50, 0.15);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+        padding: 28px 30px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 15s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .card-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .card-header h2 {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .card-header h2 i {
+        color: var(--accent-green);
+    }
+
+    .card-header p {
+        opacity: 0.9;
+        font-size: 15px;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 35px 30px;
+    }
+
+    .form-group {
+        margin-bottom: 28px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 16px;
+    }
+
+    .form-label i {
+        margin-right: 10px;
+        color: var(--accent-green);
+    }
+
+    .required::after {
+        content: " *";
+        color: var(--error-color);
+    }
+
+    .custom-select {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%232e7d32' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 20px center;
+        background-size: 16px;
+    }
+
+    .custom-select:focus {
+        border-color: var(--accent-green);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(129, 199, 132, 0.2);
+    }
+
+    .custom-select option {
+        padding: 12px;
+        font-size: 15px;
+    }
+
+    .custom-select option:disabled {
+        color: #999;
+    }
+
+    .recycler-count {
+        display: inline-block;
+        background-color: var(--light-green);
+        color: var(--dark-green);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+    .recycler-info {
+        background-color: var(--light-green);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 10px;
+        font-size: 14px;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .recycler-info i {
+        color: var(--accent-green);
+        margin-right: 8px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, var(--dark-green), #144a18);
+        transform: translateY(-3px);
+        box-shadow: 0 7px 15px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: #f0f0f0;
+        color: var(--text-color);
+    }
+
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+        transform: translateY(-2px);
+    }
+
+    .validation-error {
+        color: var(--error-color);
+        font-size: 14px;
+        margin-top: 8px;
+        display: none;
+    }
+
+    .custom-select.error {
+        border-color: var(--error-color);
+    }
+
+    .success-message {
+        background-color: #d4edda;
+        color: var(--success-color);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .success-message i {
+        font-size: 20px;
+    }
+
+    @media (max-width: 576px) {
+        .allocate-container {
+            padding: 0 15px;
+            margin: 20px auto;
+        }
+
+        .card-header, .card-body {
+            padding: 25px 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<body>
+<div class="allocate-container">
+    <div class="allocate-card">
+        <div class="card-header">
+            <div class="card-header-content">
+                <h2><i class="fas fa-map-marker-alt"></i> Allocate Area</h2>
+                <p>Assign this area to a pickup recycler</p>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Success message placeholder -->
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span>Area allocated successfully!</span>
+            </div>
+
+            <form id="allocateForm" name="form1" method="post" action="/allocate_area_post/{{ id }}" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label class="form-label required" for="recyclerSelect">
+                        <i class="fas fa-recycle"></i> Select Pickup
+                        <span class="recycler-count">{{ data|length }} available</span>
+                    </label>
+
+                    <select name="select" id="recyclerSelect" class="custom-select" required>
+                        <option value="" disabled selected>Choose a pickup...</option>
+                        {% for i in data %}
+                            <option value="{{ i.id }}">{{ i.name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="validation-error" id="recycler-error">Please select a recycler</div>
+
+                    <div class="recycler-info">
+                        <p><i class="fas fa-info-circle"></i>
+                        This will assign the selected area to the chosen recycler for waste collection and pickup operations.</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="goBack()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-check-circle"></i> Allocate Area
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    function validateForm() {
+        const recyclerSelect = document.getElementById('recyclerSelect');
+        const errorElement = document.getElementById('recycler-error');
+
+        // Reset error
+        recyclerSelect.classList.remove('error');
+        errorElement.style.display = 'none';
+
+        // Validate recycler selection
+        if (!recyclerSelect.value) {
+            recyclerSelect.classList.add('error');
+            errorElement.style.display = 'block';
+            recyclerSelect.focus();
+            return false;
+        }
+
+        // Show confirmation dialog
+        const recyclerName = recyclerSelect.options[recyclerSelect.selectedIndex].text;
+        const confirmMessage = `Are you sure you want to allocate this area to "${recyclerName}"?`;
+
+        if (!confirm(confirmMessage)) {
+            return false;
+        }
+
+        // Show loading state on button
+        const submitBtn = document.getElementById('submitBtn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Allocating...';
+        submitBtn.disabled = true;
+
+        // In a real application, this would submit the form
+        // For demo purposes, we'll show a success message
+        setTimeout(() => {
+            // Show success message
+            document.getElementById('successMessage').style.display = 'flex';
+
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // In real application, uncomment the line below to actually submit
+                // document.getElementById('allocateForm').submit();
+            }, 2000);
+        }, 1500);
+
+        return true; // Return true to submit form (in production)
+    }
+
+    // Real-time validation
+    document.getElementById('recyclerSelect').addEventListener('change', function() {
+        if (!this.value) {
+            this.classList.add('error');
+            document.getElementById('recycler-error').style.display = 'block';
+        } else {
+            this.classList.remove('error');
+            document.getElementById('recycler-error').style.display = 'none';
+        }
+    });
+
+    // Go back function
+    function goBack() {
+        if (confirm('Are you sure you want to cancel? Any unsaved changes will be lost.')) {
+            window.history.back();
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Allocate Area Form - Waste Management System');
+        console.log('Available recyclers:', {{ data|length }});
+
+        // Set focus on the select element
+        document.getElementById('recyclerSelect').focus();
+
+        // Check if there are recyclers available
+        const recyclerCount = {{ data|length }};
+        if (recyclerCount === 0) {
+            alert('No recyclers available for allocation. Please verify recyclers first.');
+            window.history.back();
+        }
+    });
+
+    // Add keyboard shortcut for submission (Ctrl + Enter)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('allocateForm').submit();
+        }
+    });
+</script>
+
+</body>
+{% endblock %}
+</html>

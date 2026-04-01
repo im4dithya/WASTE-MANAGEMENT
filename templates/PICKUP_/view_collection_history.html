@@ -1,0 +1,1324 @@
+{% extends 'PICKUP_/pickuphome.html' %}
+{% block body %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Collection History - Waste Management System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    /* Reset & Base Styles */
+    * { 
+        margin: 0; 
+        padding: 0; 
+        box-sizing: border-box; 
+    }
+    
+    body { 
+        font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; 
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+{#        padding: 20px;#}
+        color: #2c3e50;
+    }
+    
+    /* Main Container */
+    .history-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    /* Dashboard Header */
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 35px 40px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        margin-bottom: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dashboard-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .dashboard-header::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -30%;
+        width: 150px;
+        height: 150px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+    
+    .header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .header-text {
+        flex: 1;
+    }
+    
+    .header-title {
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+    
+    .header-icon {
+        font-size: 42px;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    .header-subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 400;
+        max-width: 600px;
+    }
+    
+    .header-actions {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    .export-btn {
+        padding: 12px 25px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .export-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Advanced Stats Dashboard */
+    .stats-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        padding: 40px;
+        background: white;
+        border-bottom: 1px solid #e8f0fe;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .stat-card:nth-child(2)::before {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stat-card:nth-child(3)::before {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .stat-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        flex-shrink: 0;
+    }
+    
+    .stat-card:nth-child(2) .stat-icon {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stat-card:nth-child(3) .stat-icon {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stat-text {
+        flex: 1;
+    }
+    
+    .stat-label {
+        font-size: 14px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+    
+    .stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        color: #2c3e50;
+        line-height: 1;
+    }
+    
+    .stat-trend {
+        font-size: 13px;
+        color: #7f8c8d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .trend-up { color: #2ecc71; }
+    .trend-down { color: #e74c3c; }
+    
+    /* Filter Section */
+    .filter-section {
+        background: white;
+        padding: 30px 40px;
+        border-bottom: 1px solid #e8f0fe;
+    }
+    
+    .filter-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .filter-icon {
+        color: #667eea;
+        font-size: 20px;
+    }
+    
+    .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .filter-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #5d6d7e;
+    }
+    
+    .filter-select {
+        padding: 12px 15px;
+        border: 2px solid #e8f0fe;
+        border-radius: 10px;
+        font-size: 14px;
+        color: #2c3e50;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .filter-select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Collections Grid */
+    .collections-grid {
+        padding: 40px;
+        background: white;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .grid-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .grid-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .grid-actions {
+        display: flex;
+        gap: 12px;
+    }
+    
+    .grid-btn {
+        padding: 10px 20px;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #5d6d7e;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .grid-btn:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+    }
+    
+    .grid-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    /* Collection Cards */
+    .collection-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .collection-card {
+        background: white;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        transition: all 0.4s ease;
+        animation: slideUp 0.5s ease-out;
+        animation-fill-mode: both;
+    }
+    
+    .collection-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        border-color: #667eea;
+    }
+    
+    /* Card Header */
+    .card-header {
+        background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+        padding: 25px;
+        border-bottom: 2px solid #e8f0fe;
+        position: relative;
+    }
+    
+    .card-badge {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .user-details {
+        flex: 1;
+    }
+    
+    .user-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+    
+    .user-contact {
+        font-size: 13px;
+        color: #7f8c8d;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .collection-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .meta-label {
+        font-size: 12px;
+        color: #5d6d7e;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .meta-icon {
+        color: #667eea;
+        font-size: 14px;
+    }
+    
+    .meta-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    /* Waste Items */
+    .waste-section {
+        padding: 25px;
+    }
+    
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e8f0fe;
+    }
+    
+    .section-icon {
+        color: #667eea;
+        font-size: 18px;
+    }
+    
+    .waste-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .waste-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e8f0fe;
+        transition: all 0.3s ease;
+    }
+    
+    .waste-item:hover {
+        background: white;
+        border-color: #667eea;
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .waste-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #e8f5e9 0%, #d0e6d8 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #27ae60;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    
+    .waste-details {
+        flex: 1;
+    }
+    
+    .waste-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 3px;
+    }
+    
+    .waste-unit {
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+    
+    .waste-quantity {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .quantity-badge {
+        padding: 6px 12px;
+        background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        color: #e67e22;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+    }
+    
+    .waste-reward {
+        font-weight: 700;
+        color: #f39c12;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    /* No Data State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 2px solid #e8f0fe;
+        margin: 30px 0;
+    }
+    
+    .empty-icon {
+        font-size: 64px;
+        color: #ddd;
+        margin-bottom: 20px;
+        opacity: 0.5;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .empty-title {
+        font-size: 24px;
+        color: #95a5a6;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    
+    .empty-description {
+        color: #7f8c8d;
+        font-size: 16px;
+        max-width: 500px;
+        margin: 0 auto 25px;
+        line-height: 1.6;
+    }
+    
+    /* Footer Actions */
+    .footer-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 40px;
+        border-top: 1px solid #e8f0fe;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        background: white;
+        color: #5d6d7e;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .page-btn:hover {
+        background: #f8f9fa;
+        border-color: #667eea;
+        color: #667eea;
+    }
+    
+    .page-btn.active {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+    }
+    
+    .back-button {
+        padding: 16px 35px;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+    }
+    
+    .back-button:hover {
+        background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(52, 152, 219, 0.35);
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 0.8; }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .collection-cards {
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        }
+    }
+    
+    @media (max-width: 992px) {
+        .collection-cards {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        
+        .stats-dashboard {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+    
+    @media (max-width: 768px) {
+        body {
+            padding: 15px;
+        }
+        
+        .dashboard-header {
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+        }
+        
+        .header-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .header-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        
+        .stats-dashboard,
+        .filter-section,
+        .collections-grid {
+            padding: 25px;
+        }
+        
+        .collection-cards {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .grid-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .grid-actions {
+            width: 100%;
+            justify-content: flex-start;
+        }
+        
+        .footer-actions {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .pagination {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .back-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .dashboard-header {
+            padding: 20px;
+        }
+        
+        .header-title {
+            font-size: 24px;
+        }
+        
+        .header-icon {
+            font-size: 32px;
+        }
+        
+        .stat-card {
+            padding: 20px;
+        }
+        
+        .stat-value {
+            font-size: 30px;
+        }
+        
+        .collection-meta {
+            grid-template-columns: 1fr;
+        }
+        
+        .waste-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .waste-quantity {
+            align-self: flex-end;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="history-container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="header-title">
+                    <span class="header-icon">📊</span>
+                    Collection History Dashboard
+                </h1>
+                <p class="header-subtitle">
+                    Complete overview of all waste collections completed in your allocated areas
+                </p>
+            </div>
+            
+            <div class="header-actions">
+                <button class="export-btn">
+                    <i class="fas fa-file-export"></i>
+                    Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Advanced Stats Dashboard -->
+    <div class="stats-dashboard">
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Total Collections</div>
+                        <div class="stat-value">{{ data|length }}</div>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <i class="fas fa-chart-line trend-up"></i>
+                    <span>All completed pickups in your areas</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Total Waste Units</div>
+                        <div class="stat-value">{{ total_units }}</div>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <i class="fas fa-weight-hanging"></i>
+                    <span>Collected waste quantity across all collections</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-content">
+                <div class="stat-header">
+                    <div class="stat-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="stat-text">
+                        <div class="stat-label">Total Rewards</div>
+                        <div class="stat-value">₹{{ total_rewards }}</div>
+                    </div>
+                </div>
+                <div class="stat-trend">
+                    <i class="fas fa-coins trend-up"></i>
+                    <span>Earnings from completed collections</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <div class="filter-title">
+            <span class="filter-icon">🔍</span>
+            Filter & Search Collections
+        </div>
+        
+        <div class="filter-grid">
+            <div class="filter-group">
+                <label class="filter-label">Date Range</label>
+                <select class="filter-select">
+                    <option>All Time</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 30 Days</option>
+                    <option>Last 3 Months</option>
+                    <option>Custom Range</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Area</label>
+                <select class="filter-select">
+                    <option>All Areas</option>
+                    <option>Specific Area</option>
+                    <option>Current Allocation</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Waste Type</label>
+                <select class="filter-select">
+                    <option>All Types</option>
+                    <option>Plastic</option>
+                    <option>Paper</option>
+                    <option>Glass</option>
+                    <option>Metal</option>
+                    <option>Organic</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Sort By</label>
+                <select class="filter-select">
+                    <option>Date (Newest First)</option>
+                    <option>Date (Oldest First)</option>
+                    <option>Reward (High to Low)</option>
+                    <option>Reward (Low to High)</option>
+                    <option>Quantity (High to Low)</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Collections Grid -->
+    <div class="collections-grid">
+        <div class="grid-header">
+            <h2 class="grid-title">
+                <i class="fas fa-history"></i>
+                Collection Records
+                <span style="font-size: 14px; color: #7f8c8d; font-weight: normal; margin-left: 10px;">
+                    ({{ data|length }} collections found)
+                </span>
+            </h2>
+            
+            <div class="grid-actions">
+                <button class="grid-btn active">
+                    <i class="fas fa-th-large"></i>
+                    Grid View
+                </button>
+                <button class="grid-btn">
+                    <i class="fas fa-list"></i>
+                    List View
+                </button>
+                <button class="grid-btn">
+                    <i class="fas fa-filter"></i>
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+        
+        {% if data %}
+        <div class="collection-cards">
+            {% for collection in data %}
+            <div class="collection-card" style="animation-delay: {{ forloop.counter0|add:"0.1" }}s">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <span class="card-badge">
+                        <i class="fas fa-check-circle"></i>
+                        COLLECTED
+                    </span>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ collection.user.name|first|upper }}
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name">{{ collection.user.name }}</div>
+                            <div class="user-contact">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ collection.user.phone|default:"Not provided" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="collection-meta">
+                        <div class="meta-item">
+                            <div class="meta-label">
+                                <span class="meta-icon">📅</span>
+                                Collection Date
+                            </div>
+                            <div class="meta-value">{{ collection.collectiondate }}</div>
+                        </div>
+                        
+                        <div class="meta-item">
+                            <div class="meta-label">
+                                <span class="meta-icon">💰</span>
+                                Total Reward
+                            </div>
+                            <div class="meta-value">
+                                {% if collection.reward and collection.reward != 'pending' %}
+                                    ₹{{ collection.reward }}
+                                {% else %}
+                                    <span style="color: #95a5a6; font-size: 14px;">Pending</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Waste Items Section -->
+                <div class="waste-section">
+                    <div class="section-title">
+                        <span class="section-icon">🗑️</span>
+                        Collected Waste Items
+                    </div>
+                    
+                    {% if collection.waste_items %}
+                    <div class="waste-list">
+                        {% for waste in collection.waste_items %}
+                        <div class="waste-item">
+                            <div class="waste-icon">
+                                {% if "plastic" in waste.WASTETYPE.waste|lower %}🔄
+                                {% elif "paper" in waste.WASTETYPE.waste|lower %}📄
+                                {% elif "glass" in waste.WASTETYPE.waste|lower %}🥃
+                                {% elif "metal" in waste.WASTETYPE.waste|lower %}⚙️
+                                {% elif "organic" in waste.WASTETYPE.waste|lower %}🌿
+                                {% else %}🗑️{% endif %}
+                            </div>
+                            
+                            <div class="waste-details">
+                                <div class="waste-name">{{ waste.WASTETYPE.waste }}</div>
+                                <div class="waste-unit">Unit: {{ waste.WASTETYPE.amount }}</div>
+                            </div>
+                            
+                            <div class="waste-quantity">
+                                {% if waste.collectedqty and waste.collectedqty != 'pending' %}
+                                    <span class="quantity-badge">
+                                        {{ waste.collectedqty }} units
+                                    </span>
+                                {% else %}
+                                    <span style="color: #95a5a6; font-size: 12px; font-weight: 500;">
+                                        Quantity not recorded
+                                    </span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="waste-reward">
+                                {% if waste.WASTETYPE.reward %}
+                                    ₹{{ waste.WASTETYPE.reward }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div style="text-align: center; padding: 20px; background: #f8fafc; border-radius: 12px; border: 2px dashed #e8f0fe;">
+                        <div style="font-size: 32px; color: #ddd; margin-bottom: 10px;">📦</div>
+                        <div style="color: #95a5a6; font-weight: 600; margin-bottom: 5px;">
+                            No Waste Items Recorded
+                        </div>
+                        <div style="color: #7f8c8d; font-size: 13px;">
+                            This collection doesn't have specific waste items documented
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Footer Actions -->
+        <div class="footer-actions">
+            <div class="pagination">
+                <button class="page-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <a href="/pickup_home" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">📊</div>
+            <h2 class="empty-title">No Collection History Found</h2>
+            <p class="empty-description">
+                You haven't completed any waste collections in your allocated areas yet. 
+                Your collection history will appear here once you start collecting waste from assigned areas.
+            </p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="/pickup_home" class="back-button" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <i class="fas fa-home"></i>
+                    Go to Dashboard
+                </a>
+                <a href="/view_user_request" class="back-button">
+                    <i class="fas fa-eye"></i>
+                    View Active Requests
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize animations
+        initializeAnimations();
+        
+        // Initialize filters
+        initializeFilters();
+        
+        // Initialize interactive elements
+        initializeInteractiveElements();
+        
+        // Format numbers
+        formatNumbers();
+    });
+    
+    function initializeAnimations() {
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe collection cards
+        document.querySelectorAll('.collection-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+        
+        // Observe stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    }
+    
+    function initializeFilters() {
+        const filterSelects = document.querySelectorAll('.filter-select');
+        const filterButtons = document.querySelectorAll('.grid-btn');
+        
+        // Filter select interactions
+        filterSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                this.style.borderColor = '#667eea';
+                this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+                
+                // Simulate filter application
+                setTimeout(() => {
+                    this.style.borderColor = '#e8f0fe';
+                    this.style.boxShadow = 'none';
+                }, 1000);
+            });
+            
+            select.addEventListener('focus', function() {
+                this.style.borderColor = '#667eea';
+                this.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+            });
+            
+            select.addEventListener('blur', function() {
+                this.style.borderColor = '#e8f0fe';
+                this.style.boxShadow = 'none';
+            });
+        });
+        
+        // Grid button interactions
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show feedback
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+    }
+    
+    function initializeInteractiveElements() {
+        // Export button functionality
+        const exportBtn = document.querySelector('.export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                this.disabled = true;
+                
+                // Simulate export process
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-check"></i> Report Downloaded';
+                    this.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-file-export"></i> Export Report';
+                        this.style.background = 'rgba(255, 255, 255, 0.2)';
+                        this.disabled = false;
+                    }, 2000);
+                }, 1500);
+            });
+        }
+        
+        // Waste item hover effects
+        const wasteItems = document.querySelectorAll('.waste-item');
+        wasteItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(10px)';
+                this.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.08)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateX(5px)';
+                this.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.05)';
+            });
+        });
+        
+        // Pagination buttons
+        const pageButtons = document.querySelectorAll('.page-btn');
+        pageButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.classList.contains('active') && !this.querySelector('i')) {
+                    // Remove active class from all page buttons
+                    pageButtons.forEach(btn => {
+                        if (!btn.querySelector('i')) {
+                            btn.classList.remove('active');
+                        }
+                    });
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Show feedback
+                    this.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+    }
+    
+    function formatNumbers() {
+        // Format reward amounts with commas
+        const rewardElements = document.querySelectorAll('.meta-value, .waste-reward');
+        rewardElements.forEach(element => {
+            const text = element.textContent;
+            const amount = text.match(/₹(\d+)/);
+            if (amount) {
+                element.textContent = element.textContent.replace(
+                    `₹${amount[1]}`,
+                    `₹${Number(amount[1]).toLocaleString('en-IN')}`
+                );
+            }
+        });
+        
+        // Format total units if present
+        const totalUnitsElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
+        if (totalUnitsElement) {
+            const unitsText = totalUnitsElement.textContent;
+            if (!isNaN(unitsText)) {
+                totalUnitsElement.textContent = Number(unitsText).toLocaleString('en-IN');
+            }
+        }
+        
+        // Format total rewards if present
+        const totalRewardsElement = document.querySelector('.stat-card:nth-child(3) .stat-value');
+        if (totalRewardsElement) {
+            const rewardsText = totalRewardsElement.textContent.replace('₹', '');
+            if (!isNaN(rewardsText)) {
+                totalRewardsElement.textContent = `₹${Number(rewardsText).toLocaleString('en-IN')}`;
+            }
+        }
+    }
+</script>
+</body>
+</html>
+{% endblock %}

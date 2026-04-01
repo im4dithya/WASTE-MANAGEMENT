@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Report Public Offence - Waste Management</title>
+<!-- Add custom styles -->
+<style>
+    :root {
+        --primary-green: #2e7d32;
+        --dark-green: #1b5e20;
+        --light-green: #e8f5e9;
+        --accent-green: #81c784;
+        --warning-color: #ff9800;
+        --border-color: #ddd;
+        --text-color: #333;
+        --error-color: #dc3545;
+        --success-color: #28a745;
+    }
+
+    .report-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .report-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(46, 125, 50, 0.1);
+        overflow: hidden;
+        border: 1px solid var(--light-green);
+        transition: transform 0.3s ease;
+    }
+
+    .report-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        padding: 28px 30px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 15s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .card-header-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .card-header h2 {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .card-header h2 i {
+        color: white;
+        background: rgba(0,0,0,0.2);
+        padding: 12px;
+        border-radius: 50%;
+    }
+
+    .card-header p {
+        opacity: 0.95;
+        font-size: 15px;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .card-body {
+        padding: 35px 30px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-label i {
+        color: #ff9800;
+        width: 24px;
+        text-align: center;
+    }
+
+    .required::after {
+        content: " *";
+        color: var(--error-color);
+        margin-left: 4px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 16px 20px;
+        font-size: 16px;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        background-color: white;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #ff9800;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+        background-color: #fffaf0;
+    }
+
+    .form-control::placeholder {
+        color: #999;
+        font-size: 15px;
+    }
+
+    .input-hint {
+        display: block;
+        margin-top: 8px;
+        font-size: 14px;
+        color: #666;
+        font-style: italic;
+        padding-left: 34px;
+    }
+
+    .offence-types {
+        background-color: #fff8e1;
+        border: 2px solid #ffe082;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 25px;
+        margin-bottom: 30px;
+    }
+
+    .offence-types h4 {
+        color: #f57c00;
+        margin-bottom: 15px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .offence-types ul {
+        margin: 0;
+        padding-left: 20px;
+        list-style-type: none;
+    }
+
+    .offence-types li {
+        margin-bottom: 10px;
+        color: #5d4037;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+        padding-left: 25px;
+    }
+
+    .offence-types li:before {
+        content: "⚠️";
+        position: absolute;
+        left: 0;
+        top: 2px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        padding-top: 25px;
+        border-top: 1px solid #eee;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 16px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #f57c00, #e65100);
+        transform: translateY(-3px);
+        box-shadow: 0 7px 15px rgba(255, 152, 0, 0.3);
+    }
+
+    .btn-secondary {
+        background-color: #f5f5f5;
+        color: var(--text-color);
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e0e0e0;
+        transform: translateY(-2px);
+    }
+
+    .validation-error {
+        color: var(--error-color);
+        font-size: 14px;
+        margin-top: 8px;
+        display: none;
+        padding-left: 34px;
+    }
+
+    .form-control.error {
+        border-color: var(--error-color);
+        background-color: #fff5f5;
+    }
+
+    .character-counter {
+        text-align: right;
+        font-size: 14px;
+        color: #999;
+        margin-top: 5px;
+        padding-right: 5px;
+    }
+
+    .character-counter.warning {
+        color: #ff9800;
+        font-weight: 600;
+    }
+
+    .character-counter.error {
+        color: var(--error-color);
+        font-weight: 700;
+    }
+
+    .confirmation-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        text-align: center;
+    }
+
+    .modal-icon {
+        font-size: 50px;
+        color: #ff9800;
+        margin-bottom: 20px;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .modal-actions .btn {
+        flex: 1;
+    }
+
+    @media (max-width: 576px) {
+        .report-container {
+            padding: 0 15px;
+            margin: 20px auto;
+        }
+
+        .card-header, .card-body {
+            padding: 25px 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+{% extends 'admin/admin _home.html' %}
+{% block body %}
+<body>
+<div class="report-container">
+    <div class="report-card">
+        <div class="card-header">
+            <div class="card-header-content">
+                <h2><i class="fas fa-exclamation-triangle"></i> Report Public Offence</h2>
+                <p>Report waste disposal violations and public offences</p>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="offence-types">
+                <h4><i class="fas fa-list"></i> Common Waste Offences</h4>
+                <ul>
+                    <li>Illegal dumping in public spaces</li>
+                    <li>Improper segregation of waste</li>
+                    <li>Burning of waste materials</li>
+                    <li>Littering in prohibited areas</li>
+                    <li>Non-compliance with waste collection schedules</li>
+                </ul>
+            </div>
+
+            <form id="offenceForm" name="form1" method="post" action="" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label class="form-label required" for="areaField">
+                        <i class="fas fa-map-marker-alt"></i> Area Name / Location
+                    </label>
+                    <input type="text" name="textfield" id="areaField" class="form-control"
+                           placeholder="e.g., Central Park Area, Sector 5"
+                           pattern="[A-Za-z0-9\s\.,\-]{5,100}"
+                           title="Enter a valid area name (5-100 characters)"
+                           required
+                           maxlength="100">
+                    <div class="input-hint">Enter the specific area or location where the offence occurred</div>
+                    <div class="validation-error" id="area-error">Please enter a valid area name (5-100 characters)</div>
+                    <div class="character-counter" id="area-counter">0/100</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required" for="pickupField">
+                        <i class="fas fa-user"></i> Offender / Pickup Name
+                    </label>
+                    <input type="text" name="textfield2" id="pickupField" class="form-control"
+                           placeholder="e.g., John Doe or Company Name"
+                           pattern="[A-Za-z\s\.\-]{3,80}"
+                           title="Enter a valid name (3-80 letters only)"
+                           required
+                           maxlength="80">
+                    <div class="input-hint">If known, enter the offender's name or company responsible</div>
+                    <div class="validation-error" id="pickup-error">Please enter a valid name (3-80 letters only)</div>
+                    <div class="character-counter" id="pickup-counter">0/80</div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                        <i class="fas fa-redo"></i> Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="confirmation-modal" id="confirmationModal">
+    <div class="modal-content">
+        <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 style="color: #f57c00; margin-bottom: 15px;">Confirm Report Submission</h3>
+        <p id="confirmationText">Are you sure you want to submit this public offence report?</p>
+        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+            <i class="fas fa-info-circle"></i> This report will be reviewed by waste management authorities.
+        </p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+            <button type="button" class="btn btn-primary" onclick="submitForm()">
+                <i class="fas fa-check"></i> Confirm Submit
+            </button>
+        </div>
+    </div>
+</div>
+
+{#<script>#}
+{#    // Character counters#}
+{#    const areaField = document.getElementById('areaField');#}
+{#    const pickupField = document.getElementById('pickupField');#}
+{#    const areaCounter = document.getElementById('area-counter');#}
+{#    const pickupCounter = document.getElementById('pickup-counter');#}
+{##}
+{#    areaField.addEventListener('input', function() {#}
+{#        const length = this.value.length;#}
+{#        areaCounter.textContent = `${length}/100`;#}
+{##}
+{#        // Update counter color based on length#}
+{#        if (length >= 90) {#}
+{#            areaCounter.className = 'character-counter warning';#}
+{#        } else if (length >= 100) {#}
+{#            areaCounter.className = 'character-counter error';#}
+{#        } else {#}
+{#            areaCounter.className = 'character-counter';#}
+{#        }#}
+{##}
+{#        // Validate in real-time#}
+{#        validateField(this, 'area-error', /^[A-Za-z0-9\s\.,\-]{5,100}$/);#}
+{#    });#}
+{##}
+{#    pickupField.addEventListener('input', function() {#}
+{#        const length = this.value.length;#}
+{#        pickupCounter.textContent = `${length}/80`;#}
+{##}
+{#        // Update counter color based on length#}
+{#        if (length >= 70) {#}
+{#            pickupCounter.className = 'character-counter warning';#}
+{#        } else if (length >= 80) {#}
+{#            pickupCounter.className = 'character-counter error';#}
+{#        } else {#}
+{#            pickupCounter.className = 'character-counter';#}
+{#        }#}
+{##}
+{#        // Validate in real-time#}
+{#        validateField(this, 'pickup-error', /^[A-Za-z\s\.\-]{3,80}$/);#}
+{#    });#}
+{##}
+{#    function validateField(field, errorId, pattern) {#}
+{#        const errorElement = document.getElementById(errorId);#}
+{##}
+{#        if (!field.value.trim()) {#}
+{#            field.classList.remove('error');#}
+{#            errorElement.style.display = 'none';#}
+{#            return false;#}
+{#        }#}
+{##}
+{#        if (!pattern.test(field.value.trim())) {#}
+{#            field.classList.add('error');#}
+{#            errorElement.style.display = 'block';#}
+{#            return false;#}
+{#        } else {#}
+{#            field.classList.remove('error');#}
+{#            errorElement.style.display = 'none';#}
+{#            return true;#}
+{#        }#}
+{#    }#}
+{##}
+{#    // Main form validation#}
+{#    function validateForm() {#}
+{#        event.preventDefault();#}
+{##}
+{#        const areaValid = validateField(areaField, 'area-error', /^[A-Za-z0-9\s\.,\-]{5,100}$/);#}
+{#        const pickupValid = validateField(pickupField, 'pickup-error', /^[A-Za-z\s\.\-]{3,80}$/);#}
+{##}
+{#        if (!areaValid || !pickupValid) {#}
+{#            // Scroll to first error#}
+{#            const firstError = document.querySelector('.form-control.error');#}
+{#            if (firstError) {#}
+{#                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });#}
+{#                firstError.focus();#}
+{#            }#}
+{#            return false;#}
+{#        }#}
+{##}
+{#        // Show confirmation modal#}
+{#        showConfirmationModal();#}
+{#        return false;#}
+{#    }#}
+{##}
+{#    // Modal functions#}
+{#    function showConfirmationModal() {#}
+{#        const modal = document.getElementById('confirmationModal');#}
+{#        const confirmationText = document.getElementById('confirmationText');#}
+{##}
+{#        // Update confirmation text with entered values#}
+{#        const areaValue = areaField.value;#}
+{#        const pickupValue = pickupField.value;#}
+{#        confirmationText.innerHTML = `Report offence at <strong>"${areaValue}"</strong> involving <strong>"${pickupValue}"</strong>.`;#}
+{##}
+{#        modal.style.display = 'flex';#}
+{#    }#}
+{##}
+{#    function closeModal() {#}
+{#        document.getElementById('confirmationModal').style.display = 'none';#}
+{#    }#}
+{##}
+{#    function submitForm() {#}
+{#        // Show loading state#}
+{#        const submitBtn = document.getElementById('submitBtn');#}
+{#        const originalText = submitBtn.innerHTML;#}
+{#        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';#}
+{#        submitBtn.disabled = true;#}
+{##}
+{#        // Close modal#}
+{#        closeModal();#}
+{##}
+{#        // Simulate submission delay#}
+{#        setTimeout(() => {#}
+{#            // In a real application, this would submit the form#}
+{#            // document.getElementById('offenceForm').submit();#}
+{##}
+{#            // Show success alert#}
+{#            alert('Public offence report submitted successfully! The report will be reviewed by authorities.');#}
+{##}
+{#            // Reset form#}
+{#            resetForm();#}
+{##}
+{#            // Reset button#}
+{#            submitBtn.innerHTML = originalText;#}
+{#            submitBtn.disabled = false;#}
+{#        }, 2000);#}
+{#    }#}
+{##}
+{#    // Reset form function#}
+{#    function resetForm() {#}
+{#        if (confirm('Are you sure you want to clear the form? All entered data will be lost.')) {#}
+{#            document.getElementById('offenceForm').reset();#}
+{#            areaCounter.textContent = '0/100';#}
+{#            pickupCounter.textContent = '0/80';#}
+{#            areaCounter.className = 'character-counter';#}
+{#            pickupCounter.className = 'character-counter';#}
+{##}
+{#            // Clear errors#}
+{#            document.querySelectorAll('.validation-error').forEach(el => {#}
+{#                el.style.display = 'none';#}
+{#            });#}
+{#            document.querySelectorAll('.form-control').forEach(el => {#}
+{#                el.classList.remove('error');#}
+{#            });#}
+{##}
+{#            areaField.focus();#}
+{#        }#}
+{#    }#}
+{##}
+{#    // Initialize on page load#}
+{#    document.addEventListener('DOMContentLoaded', function() {#}
+{#        console.log('Public Offence Report Form - Waste Management System');#}
+{##}
+{#        // Set initial counter values#}
+{#        areaCounter.textContent = '0/100';#}
+{#        pickupCounter.textContent = '0/80';#}
+{##}
+{#        // Focus on first field#}
+{#        areaField.focus();#}
+{##}
+{#        // Close modal when clicking outside#}
+{#        window.addEventListener('click', function(event) {#}
+{#            const modal = document.getElementById('confirmationModal');#}
+{#            if (event.target === modal) {#}
+{#                closeModal();#}
+{#            }#}
+{#        });#}
+{#    });#}
+{##}
+{#    // Add keyboard shortcuts#}
+{#    document.addEventListener('keydown', function(e) {#}
+{#        // Ctrl + Enter to submit#}
+{#        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {#}
+{#            e.preventDefault();#}
+{#            validateForm();#}
+{#        }#}
+{##}
+{#        // Escape to close modal#}
+{#        if (e.key === 'Escape') {#}
+{#            closeModal();#}
+{#        }#}
+{#    });#}
+{#</script>#}
+
+</body>
+{% endblock %}
+</html>
